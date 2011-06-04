@@ -17,6 +17,8 @@
 %   Peter Williams, Key Centre for Design Quality, Sydney University
 %   e-mail: peterw@archsci.arch.su.oz.au
 
+% Att göra: allt
+
 ENTRY
   { address
     author
@@ -141,14 +143,14 @@ FUNCTION {field.or.null}
 FUNCTION {emphasize}
 { duplicate$ empty$
     { pop$ "" }
-    { "{\em " swap$ * "}" * }
+    { "\emph{ " swap$ * "}" * }
   if$
 }
 
 FUNCTION {embolden}
 { duplicate$ empty$
     { pop$ "" }
-    { "{\bf " swap$ * "}" * }
+    { "\textbf{ " swap$ * "}" * }
   if$
 }
 
@@ -395,7 +397,7 @@ FUNCTION {format.in.ed.booktitle}
     { "" }
     { editor empty$
 	{ booktitle emphasize }
-	{ "{\em i} " format.editors.reverse * ", " * booktitle emphasize * }
+	{ "\emph{ i} " format.editors.reverse * ", " * booktitle emphasize * }
       if$
     }
   if$
@@ -438,11 +440,11 @@ FUNCTION {format.article.crossref}
 	  warning$
 	  ""
 	}
-	{ "i {\em " journal * "}" * " \cite{" * crossref * "}" *
+	{ "i \emph{ " journal * "}" * " \cite{" * crossref * "}" *
         }
       if$
     }
-    { " {\em i} \citeasnoun{" crossref * "}" * }
+    { " \emph{ i} \citeasnoun{" crossref * "}" * }
   if$
 }
 
@@ -464,7 +466,7 @@ FUNCTION {format.book.crossref}
 	      crossref * warning$
 	      "" *
 	    }
-	    { "{\em " * series * "}" * " \cite{" * crossref * "}" *}
+	    { "\emph{ " * series * "}" * " \cite{" * crossref * "}" *}
 	  if$
 	}
 	{ " \citeasnoun{" * crossref * "}" * }
@@ -485,13 +487,13 @@ FUNCTION {format.incoll.inproc.crossref}
 	      crossref * warning$
 	      ""
 	    }
-	    { "i {\em " booktitle * "}" * " \cite{" * crossref * "}" *}
+	    { "i \emph{ " booktitle * "}" * " \cite{" * crossref * "}" *}
 	  if$
 	}
-	{ " {\em i} \citeasnoun{" crossref * "}" * }
+	{ " \emph{ i} \citeasnoun{" crossref * "}" * }
       if$
     }
-    {  " {\em i} \citeasnoun{" crossref * "}" * }
+    {  " \emph{ i} \citeasnoun{" crossref * "}" * }
   if$
  
 }
