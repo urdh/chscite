@@ -643,8 +643,41 @@ FUNCTION {journal.or.series}
 	if$
 }
 
+FUNCTION {format.gen.pages}
+{ "," format.pages tie.or.space.connect }
+
 %% STYLES
 FUNCTION {article}
+{ output.bibitem
+  make.list.label "(" tie.or.space.connect list.year * ") " * write$
+  author "author" item.check
+  title missing$
+    { skip$ }
+    { title "." * write$ }
+  if$
+	journal missing$
+		{ skip$ }
+		{ volume missing$
+			{ cite$ " has journal/series with no volume!" * warning$ }
+			{ "," journal.or.series emphasize tie.or.space.connect ", vol.~" volume * *
+				number missing$
+				{ skip$ }
+				{ ", nr~" number * }
+				if$ *
+			 	write$ }
+			if$
+		}
+		if$
+		pages missing$
+			{ skip$ }
+			{ format.gen.pages write$ }
+		if$
+		"." write$
+  
+  fin.entry
+}
+
+FUNCTION {book}
 { output.bibitem
   make.list.label "(" tie.or.space.connect list.year * ") " * write$
   author "author" item.check
@@ -661,8 +694,10 @@ FUNCTION {article}
 		{ "," format.editors tie.or.space.connect write$ }
 	if$
 	pages missing$
+	journal missing$
+	not or
 		{ skip$ }
-		{ "," format.pages tie.or.space.connect write$ }
+		{ format.gen.pages write$ }
 	if$
 	"." write$
   edition missing$
@@ -687,63 +722,27 @@ FUNCTION {article}
 			{ skip$ }
 			{ volume missing$
 				{ cite$ " has journal/series with no volume!" * warning$ }
-				{ " (" journal.or.series ":" * * volume tie.or.space.connect ")." * write$ }
+				{ " (" journal.or.series ":" * * volume tie.or.space.connect
+					series missing$
+					{ skip$ }
+					{ format.gen.pages }
+					if$ *
+					")." * write$ }
 				if$
 			}
 		if$
   
   fin.entry
-  write.url
 }
-
-FUNCTION {book}
-{ article }
 
 FUNCTION {booklet}
-{ output.bibitem
-  list.label.output
-  " (" list.year * ") " * write$
-  new.block
-  title.field field.used =
-    { skip$ }
-    { format.title "title" output.check }
-  if$
-  howpublished output
-  address output
-  
-  fin.entry
-  write.url
-}
+{ book }
 
 FUNCTION {inbook}
-{ article }
+{ book }
 
 FUNCTION {incollection}
-{ output.bibitem
-  list.label.output
-  " (" list.year * ") " * write$
-  new.block
-  title.field field.used =
-    { skip$ }
-    { format.title "title" output.check }
-  if$
-  author "author" item.check
-  crossref missing$
-    { format.in.ed.booktitle "booktitle" output.check
-      format.edition output
-      format.bvolume output
-      format.number.series output
-      publisher "publisher" output.check
-      address output
-    }
-    { format.incoll.inproc.crossref write$
-    }
-  if$
-  format.chapter.pages output
-  
-  fin.entry
-  write.url
-}
+{ book }
 
 FUNCTION {inproceedings}
 { output.bibitem
@@ -927,25 +926,25 @@ FUNCTION {unpublished}
 
 FUNCTION {default.type} { misc }
 
-MACRO {jan} {"January"}
+MACRO {jan} {"Januari"}
 
-MACRO {feb} {"February"}
+MACRO {feb} {"Februari"}
 
-MACRO {mar} {"March"}
+MACRO {mar} {"Mars"}
 
 MACRO {apr} {"April"}
 
-MACRO {may} {"May"}
+MACRO {may} {"Maj"}
 
-MACRO {jun} {"June"}
+MACRO {jun} {"Juni"}
 
-MACRO {jul} {"July"}
+MACRO {jul} {"Juli"}
 
-MACRO {aug} {"August"}
+MACRO {aug} {"Augusti"}
 
 MACRO {sep} {"September"}
 
-MACRO {oct} {"October"}
+MACRO {oct} {"Oktober"}
 
 MACRO {nov} {"November"}
 
