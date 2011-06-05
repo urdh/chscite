@@ -122,14 +122,14 @@ FUNCTION {field.or.null}
 FUNCTION {emphasize}
 { duplicate$ empty$
     { pop$ "" }
-    { "\emph{ " swap$ * "}" * }
+    { "\emph{" swap$ * "}" * }
   if$
 }
 
 FUNCTION {embolden}
 { duplicate$ empty$
     { pop$ "" }
-    { "\textbf{ " swap$ * "}" * }
+    { "\textbf{" swap$ * "}" * }
   if$
 }
 
@@ -215,7 +215,7 @@ FUNCTION {n.dashify}
 }
 
 FUNCTION {format.btitle}
-{ title emphasize
+{ title "." * emphasize
 }
 
 FUNCTION {format.ctitle}
@@ -276,14 +276,7 @@ FUNCTION {format.number.series}
 }
 
 FUNCTION {format.edition}
-{ edition empty$
-    { "" }
-    { output.state mid.sentence =
-	{ edition "l" change.case$ " uppl." * }
-	{ edition "t" change.case$ " uppl." * }
-      if$
-    }
-  if$
+{ edition ":e" *
 }
 
 INTEGERS { multiresult }
@@ -643,61 +636,68 @@ FUNCTION {list.label.output}
 { make.list.label " " * write$
 }
 
+FUNCTION {journal.or.series}
+{ journal missing$
+	{ series }
+	{ journal }
+	if$
+}
+
 %% STYLES
 FUNCTION {article}
 { output.bibitem
-  list.label.output
-  " (" list.year * ")" * write$
+  make.list.label "(" tie.or.space.connect list.year * ") " * write$
   author "author" item.check
-  title.field field.used =
+	chapter missing$
+		{ skip$ }
+		{ chapter "." * "I " tie.or.space.connect write$ }
+	if$
+  title missing$
     { skip$ }
-    { format.btitle "title" output.check }
+    { title emphasize write$ }
   if$
-  crossref missing$
-    { journal emphasize "journal" duplicate$ item.check
-      " " * format.vol.num.pages * output
-    }
-    { format.article.crossref write$
-      format.pages output
-    }
-  if$
+	editor missing$
+		{ skip$ }
+		{ "," format.editors tie.or.space.connect write$ }
+	if$
+	pages missing$
+		{ skip$ }
+		{ "," format.pages tie.or.space.connect write$ }
+	if$
+	"." write$
+  edition missing$
+		{ skip$ }
+		{ edition empty$
+			{ skip$ }
+			{ " " format.edition "upplagan." tie.or.space.connect * write$ }
+			if$
+		}
+	if$
+ 	publisher missing$
+		{ skip$ }
+		{ address missing$
+			{ cite$ " has publisher with no address!" * warning$ }
+			{ " " address ":" * * publisher tie.or.space.connect "." * write$ }
+			if$
+		}
+	if$
+		series missing$
+		journal missing$ 
+		and
+			{ skip$ }
+			{ volume missing$
+				{ cite$ " has journal/series with no volume!" * warning$ }
+				{ " (" journal.or.series ":" * * volume tie.or.space.connect ")." * write$ }
+				if$
+			}
+		if$
   
   fin.entry
   write.url
 }
 
 FUNCTION {book}
-{ output.bibitem
-  list.label.output
-  " (" list.year * ") " * write$
-  new.block
-  author empty$
-    { editor "author and editor" item.check }
-    { crossref missing$
-	{ "author and editor" editor either.or.check }
-	'skip$
-      if$
-    }
-  if$
-  title.field field.used =
-    { skip$ }
-    { format.btitle "title" output.check }
-  if$
-  crossref missing$
-    { format.bvolume output
-      format.number.series output
-      format.edition output
-      publisher "publisher" output.check
-      address output
-    }
-    { format.book.crossref write$
-      format.edition output
-    }
-  if$
-  
-  fin.entry
-  write.url
-}
+{ article }
 
 FUNCTION {booklet}
 { output.bibitem
@@ -716,38 +716,7 @@ FUNCTION {booklet}
 }
 
 FUNCTION {inbook}
-{ output.bibitem
-  list.label.output
-  " (" list.year * ") " * write$
-  new.block
-  author empty$
-    { editor "author and editor" item.check }
-    { crossref missing$
-	{ "author and editor" editor either.or.check }
-	'skip$
-      if$
-    }
-  if$
-  title.field field.used =
-    { skip$ }
-    { format.btitle "title" output.check }
-  if$
-  crossref missing$
-    { format.bvolume output
-      format.number.series output
-      format.edition output
-      publisher "publisher" output.check
-      address output
-    }
-    { format.book.crossref write$
-      format.edition output
-    }
-  if$
-  format.chapter.pages "chapter and pages" output.check
-  
-  fin.entry
-  write.url
-}
+{ article }
 
 FUNCTION {incollection}
 { output.bibitem
