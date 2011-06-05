@@ -240,7 +240,7 @@ FUNCTION {either.or.check}
 FUNCTION {format.editors}
 { editor empty$
     { "" }
-    { "red." "{f.~}{vv~}{ll}{, jj}" editor format.names tie.or.space.connect }
+    { "{vv~}{ll}{, jj}{, f.}" editor format.names "red. " tie.or.space.connect }
   if$
 }
 
@@ -676,8 +676,8 @@ FUNCTION {article}
 			{ cite$ " has journal/series with no volume!" * warning$ }
 			{ "." journal.or.series emphasize tie.or.space.connect ", vol.~" volume * *
 				number missing$
-				{ skip$ }
-				{ ", nr~" number * }
+					{ "" }
+					{ ", nr~" number * }
 				if$ *
 			 	write$ }
 			if$
@@ -752,42 +752,39 @@ FUNCTION {book}
   fin.entry
 }
 
-FUNCTION {booklet}
-{ book }
+FUNCTION {booklet} { book }
 
-FUNCTION {inbook}
-{ book }
+FUNCTION {inbook} { book }
 
-FUNCTION {incollection}
-{ book }
+FUNCTION {incollection} { book }
 
 FUNCTION {inproceedings}
 { output.bibitem
   make.list.label "(" tie.or.space.connect list.year * ") " * write$
   author "author" item.check
-  title missing$
-    { skip$ }
-    { title write$ }
-  if$
 	booktitle missing$
-		{ skip$ }
-		{ ". I " booktitle emphasize * 
-			month missing$
-				{ "" }
-				{ ";" month "~" year * * tie.or.space.connect }
-			if$ *
-			address missing$
-				{ "" }
-				{ "," address tie.or.space.connect }
-			if$ *
-		 	"." *
+		{ title emphasize }
+		{ title ". I " booktitle emphasize * * }
+	if$	
+	month missing$
+		{ "" }
+		{ booktitle missing$
+				{ "." }
+				{ ";" }
+			if$
+			month "~" year * * tie.or.space.connect
 		}
-	if$
+	if$ *
+	address missing$
+		{ "" }
+		{ "," address tie.or.space.connect }
+	if$ *
+ 	"." *
 	pages missing$
 		{ skip$ }
-		{ format.pages tie.or.space.connect }
-	if$
-	"." * write$
+		{ format.pages tie.or.space.connect "." * }
+	if$ 
+	write$
   
   fin.entry
 }
@@ -807,106 +804,58 @@ FUNCTION {mastersthesis}
 	")." * write$
 }
 
-FUNCTION {misc}
-{ output.bibitem
-  list.label.output
-  " (" list.year * ") " * write$
-  new.block
-  title.field field.used =
-    { skip$ }
-    { format.title output }
-  if$
-  howpublished output
-  
-  fin.entry
-  write.url
-  empty.misc.check
-}
-
 FUNCTION {phdthesis}
-{ output.bibitem
-  list.label.output
-  " (" list.year * ") " * write$
-  new.block
-  author "author" item.check
-  title.field field.used =
-    { skip$ }
-    { format.btitle "title" output.check }
-  if$
-  "doktorsavhandling" format.thesis.type write$
-  school "school" output.check
-  address output
-  
-  fin.entry
-  write.url
+{ book
+	"(" "Doktorsavhandling" *
+	note missing$
+		{ "" }
+		{ " inom" note tie.or.space.connect }
+	if$ *
+	")." * write$
 }
 
-FUNCTION {proceedings}
-{ output.bibitem
-  list.label.output
-  " (" list.year * ") " * write$
-  new.block
-  title.field field.used =
-    { skip$ }
-    { format.btitle "title" output.check }
-  if$
-  format.bvolume output
-  format.number.series output
-  address empty$
-    { editor empty$
-	{ skip$ }
-	{ organization output
-	}
-      if$
-      publisher output
-    }
-    { editor empty$
-	'skip$
-	{ organization output }
-      if$
-      publisher output
-      address write$
-    }
-  if$
-  
-
-  fin.entry
-  write.url
-}
-
-FUNCTION {techreport}
-{ output.bibitem
-  list.label.output
-  " (" list.year * ") " * write$
-  new.block
-  author "author" item.check
-  title.field field.used =
-    { skip$ }
-    { format.title "title" output.check }
-  if$
-  format.tr.number emphasize write$
-  institution "institution" output.check
-  address output
-  
-  
-  fin.entry
-  write.url
-}
+FUNCTION {proceedings} { inproceedings }
 
 FUNCTION {unpublished}
 { output.bibitem
-  list.label.output
-  " (" list.year * ") " * write$
-  new.block
+  make.list.label "(" tie.or.space.connect list.year * ") " * write$
   author "author" item.check
-  title.field field.used =
+	chapter missing$
+		{ skip$ }
+		{ chapter "." * "I " tie.or.space.connect write$ }
+	if$
+  title missing$
     { skip$ }
-    { format.title "title" output.check }
+    { title emphasize write$ }
   if$
+	editor missing$
+		{ skip$ }
+		{ "," format.editors tie.or.space.connect write$ }
+	if$
+	pages missing$
+	journal missing$
+	not or
+		{ skip$ }
+		{ format.gen.pages write$ }
+	if$
+	". Under tryckning." write$
+ 	publisher missing$
+		{ skip$ }
+		{ address missing$
+			{ cite$ " has publisher with no address!" * warning$ }
+			{ " " address ":" * * publisher.or.school tie.or.space.connect "." * write$ }
+			if$
+		}
+	if$
   
   fin.entry
-  write.url
 }
+
+FUNCTION {misc}
+{ cite$ ": @misc cite style not implemented!" * warning$ }
+
+FUNCTION {techreport}
+{ cite$ ": @techreport cite style not implemented!" * warning$ }
 
 FUNCTION {default.type} { misc }
 
