@@ -643,6 +643,13 @@ FUNCTION {journal.or.series}
 	if$
 }
 
+FUNCTION {publisher.or.school}
+{ publisher missing$
+	{ school }
+	{ publisher }
+	if$
+}
+
 FUNCTION {format.gen.pages}
 { "," format.pages tie.or.space.connect }
 
@@ -653,13 +660,21 @@ FUNCTION {article}
   author "author" item.check
   title missing$
     { skip$ }
-    { title "." * write$ }
+    { title write$ }
   if$
+	type$ "inproceedings" =
+	type$ "conference" =
+	or not
+	month missing$
+	or
+		{ skip$ }
+		{ ";" month "~" year * * tie.or.space.connect write$ }
+	if$
 	journal missing$
 		{ skip$ }
 		{ volume missing$
 			{ cite$ " has journal/series with no volume!" * warning$ }
-			{ "," journal.or.series emphasize tie.or.space.connect ", vol.~" volume * *
+			{ "." journal.or.series emphasize tie.or.space.connect ", vol.~" volume * *
 				number missing$
 				{ skip$ }
 				{ ", nr~" number * }
@@ -709,10 +724,12 @@ FUNCTION {book}
 		}
 	if$
  	publisher missing$
+	school missing$
+	and
 		{ skip$ }
 		{ address missing$
 			{ cite$ " has publisher with no address!" * warning$ }
-			{ " " address ":" * * publisher tie.or.space.connect "." * write$ }
+			{ " " address ":" * * publisher.or.school tie.or.space.connect "." * write$ }
 			if$
 		}
 	if$
@@ -724,7 +741,7 @@ FUNCTION {book}
 				{ cite$ " has journal/series with no volume!" * warning$ }
 				{ " (" journal.or.series ":" * * volume tie.or.space.connect
 					series missing$
-					{ skip$ }
+					{ "" }
 					{ format.gen.pages }
 					if$ *
 					")." * write$ }
@@ -746,81 +763,48 @@ FUNCTION {incollection}
 
 FUNCTION {inproceedings}
 { output.bibitem
-  list.label.output
-  " (" list.year * ") " * write$
-  new.block
-  title.field field.used =
-    { skip$ }
-    { format.title "title" output.check }
-  if$
+  make.list.label "(" tie.or.space.connect list.year * ") " * write$
   author "author" item.check
-  crossref missing$
-    { format.in.ed.booktitle "booktitle" output.check
-      format.bvolume output
-      format.number.series output
-      address empty$
-	{ organization output
-	  publisher output
-	}
-	{ organization output
-	  publisher output
-	  address write$
-	}
-      if$
-    }
-    { format.incoll.inproc.crossref write$
-    }
+  title missing$
+    { skip$ }
+    { title write$ }
   if$
-  format.pages output
+	booktitle missing$
+		{ skip$ }
+		{ ". I " booktitle emphasize * 
+			month missing$
+				{ "" }
+				{ ";" month "~" year * * tie.or.space.connect }
+			if$ *
+			address missing$
+				{ "" }
+				{ "," address tie.or.space.connect }
+			if$ *
+		 	"." *
+		}
+	if$
+	pages missing$
+		{ skip$ }
+		{ format.pages tie.or.space.connect }
+	if$
+	"." * write$
   
   fin.entry
-  write.url
 }
 
 FUNCTION {conference} { inproceedings }
 
 FUNCTION {manual}
-{ output.bibitem
-  list.label.output
-  " (" list.year * ") " * write$
-  new.block
-  title.field field.used =
-    { skip$ }
-    { format.btitle "title" output.check }
-  if$
-  format.edition output
-  author empty$
-    { organization empty$
-	{ address output
-	}
-	'skip$
-      if$
-    }
-    { organization output
-      address output
-    }
-  if$
-  
-  fin.entry
-  write.url
-}
+{ cite$ ": @manual cite style not implemented!" * warning$ }
 
 FUNCTION {mastersthesis}
-{ output.bibitem
-  list.label.output
-  " (" list.year * ") " * write$
-  new.block
-  author "author" item.check
-  title.field field.used =
-    { skip$ }
-    { format.title emphasize "title" output.check }
-  if$
-  "examensarbete" format.thesis.type write$
-  school "school" output.check
-  address output
-  
-  fin.entry
-  write.url
+{ book
+	"(" "Examensarbete" *
+	note missing$
+		{ "" }
+		{ " inom" note tie.or.space.connect }
+	if$ *
+	")." * write$
 }
 
 FUNCTION {misc}
