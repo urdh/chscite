@@ -1,24 +1,21 @@
-% BibTeX standard bibliography style `dcu' (one of the harvard family)
-	% version 0.99a for BibTeX versions 0.99a or later, LaTeX version 2.09.
-	% Copyright (C) 1991, all rights reserved.
-	% Copying of this file is authorized only if either
-	% (1) you make absolutely no changes to your copy, including name, or
-	% (2) if you do make changes, you name it something other than
-	% btxbst.doc, plain.bst, unsrt.bst, alpha.bst, abbrv.bst, agsm.bst,
-        % dcu.bst or kluwer.bst.
-	% This restriction helps ensure that all standard styles are identical.
-	% The file harvard.tex has the documentation for this style.
-
-% ACKNOWLEDGEMENT:
-%   This document is a modified version of alpha.bst to which it owes much of
-%   its functionality.
-
-% AUTHOR
-%   Peter Williams, Key Centre for Design Quality, Sydney University
-%   e-mail: peterw@archsci.arch.su.oz.au
-
-% Att göra: bygg om från grunden
-
+%%
+%% This is file `chscite.bst',
+%% from the chscite package.
+%%
+%% It corresponds to version 1.0b.
+%% 
+%% Copyright (C) 2011 by Simon Sigurdhsson <ssimon@student.chalmers.se>
+%% 
+%% This file may be distributed and/or modified under the conditions of
+%% the LaTeX Project Public License, either version 1.2 of this license
+%% or (at your option) any later version.  The latest version of this
+%% license is in:
+%% 
+%%    http://www.latex-project.org/lppl.txt
+%% 
+%% and version 1.2 or later is part of all distributions of LaTeX version
+%% 1999/12/01 or later.
+%%
 ENTRY
   { address
     author
@@ -244,6 +241,13 @@ FUNCTION {format.editors}
   if$
 }
 
+FUNCTION {format.book.editors}
+{ editor empty$
+    { "" }
+    { "{vv~}{ll}{, jj}{, f.}" editor format.names "red. " tie.or.space.connect }
+  if$
+}
+
 FUNCTION {format.bvolume}
 { volume empty$
     { "" }
@@ -342,7 +346,7 @@ FUNCTION {format.in.ed.booktitle}
     { "" }
     { editor empty$
 	{ ". I " booktitle emphasize * }
-	{ ". I " booktitle emphasize * ", " * format.editors * }
+	{ ". I " booktitle emphasize * ", " * format.book.editors * }
       if$
     }
   if$
@@ -706,7 +710,7 @@ FUNCTION {book}
   if$
 	editor missing$
 		{ skip$ }
-		{ "," format.editors tie.or.space.connect write$ }
+		{ "," format.book.editors tie.or.space.connect write$ }
 	if$
 	pages missing$
 	journal missing$
@@ -830,7 +834,7 @@ FUNCTION {unpublished}
   if$
 	editor missing$
 		{ skip$ }
-		{ "," format.editors tie.or.space.connect write$ }
+		{ "," format.book.editors tie.or.space.connect write$ }
 	if$
 	pages missing$
 	journal missing$
