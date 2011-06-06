@@ -2,7 +2,7 @@
 %% This is file `chscite.bst',
 %% from the chscite package.
 %%
-%% It corresponds to version 1.0b.
+%% It corresponds to version 2.0.
 %% 
 %% Copyright (C) 2011 by Simon Sigurdhsson <ssimon@student.chalmers.se>
 %% 
@@ -159,7 +159,7 @@ FUNCTION {format.names}
 	    { ", " * t * }
 	    { t "others" =
 		{ " et~al." * }
-		{ " och\ " * t * }
+		{ " \chsWand{}\ " * t * }
 	      if$
 	    }
 	  if$
@@ -491,7 +491,7 @@ FUNCTION {format.lab.names.abbr}
 	{ s #1 "{vv~}{ll}" format.name$ " et~al." * }
 	{ s #2 "{ff }{vv }{ll}{ jj}" format.name$ "others" =
             { s #1 "{vv~}{ll}" format.name$ " et~al." * }
-	    { s #1 "{vv~}{ll}" format.name$ " och\ " *
+	    { s #1 "{vv~}{ll}" format.name$ " \chsWand{}\ " *
               s #2 "{vv~}{ll}" format.name$ * 
             }
           if$
@@ -514,7 +514,7 @@ FUNCTION {format.lab.names.full}
 	    { ", " * t * }
 	    { t "others" =
 		{ " et~al." * }
-		{ " och\ " * t * }
+		{ " \chsWand{}\ " * t * }
 	      if$
 	    }
 	  if$
@@ -702,7 +702,7 @@ FUNCTION {book}
   author "author" item.check
 	chapter missing$
 		{ skip$ }
-		{ chapter "." * "I " tie.or.space.connect write$ }
+		{ chapter "." * "\chsWin{} " tie.or.space.connect write$ }
 	if$
   title missing$
     { skip$ }
@@ -768,7 +768,7 @@ FUNCTION {inproceedings}
   author "author" item.check
 	booktitle missing$
 		{ title emphasize }
-		{ title ". I " booktitle emphasize * * }
+		{ title ". \chsWin{} " booktitle emphasize * * }
 	if$	
 	month missing$
 		{ "" }
@@ -800,20 +800,20 @@ FUNCTION {manual}
 
 FUNCTION {mastersthesis}
 { book
-	"(" "Examensarbete" *
+	"(" "\chsWmscthesis{}" *
 	note missing$
 		{ "" }
-		{ " inom" note tie.or.space.connect }
+		{ " \chsWinstitution{}" note tie.or.space.connect }
 	if$ *
 	")." * write$
 }
 
 FUNCTION {phdthesis}
 { book
-	"(" "Doktorsavhandling" *
+	"(" "\chsWphdthesis{}" *
 	note missing$
 		{ "" }
-		{ " inom" note tie.or.space.connect }
+		{ " \chsWinstitution{}" note tie.or.space.connect }
 	if$ *
 	")." * write$
 }
@@ -826,7 +826,7 @@ FUNCTION {unpublished}
   author "author" item.check
 	chapter missing$
 		{ skip$ }
-		{ chapter "." * "I " tie.or.space.connect write$ }
+		{ chapter "." * "\chsWin{} " tie.or.space.connect write$ }
 	if$
   title missing$
     { skip$ }
@@ -842,7 +842,7 @@ FUNCTION {unpublished}
 		{ skip$ }
 		{ format.gen.pages write$ }
 	if$
-	". Under tryckning." write$
+	". \chsWprinting." write$
  	publisher missing$
 		{ skip$ }
 		{ address missing$
@@ -863,29 +863,29 @@ FUNCTION {techreport}
 
 FUNCTION {default.type} { misc }
 
-MACRO {jan} {"Januari"}
+MACRO {jan} {"\chsWjanuary{}"}
 
-MACRO {feb} {"Februari"}
+MACRO {feb} {"\chsWfebruary{}"}
 
-MACRO {mar} {"Mars"}
+MACRO {mar} {"\chsWmarch{}"}
 
-MACRO {apr} {"April"}
+MACRO {apr} {"\chsWapril{}"}
 
-MACRO {may} {"Maj"}
+MACRO {may} {"\chsWmay{}"}
 
-MACRO {jun} {"Juni"}
+MACRO {jun} {"\chsWjune{}"}
 
-MACRO {jul} {"Juli"}
+MACRO {jul} {"\chsWjuly{}"}
 
-MACRO {aug} {"Augusti"}
+MACRO {aug} {"\chsWaugust{}"}
 
-MACRO {sep} {"September"}
+MACRO {sep} {"\chsWseptember{}"}
 
-MACRO {oct} {"Oktober"}
+MACRO {oct} {"\chsWoctober{}"}
 
-MACRO {nov} {"November"}
+MACRO {nov} {"\chsWnovember{}"}
 
-MACRO {dec} {"December"}
+MACRO {dec} {"\chsWdecember{}"}
 
 MACRO {acmcs} {"ACM Computing Surveys"}
 
@@ -938,7 +938,7 @@ FUNCTION {sortify}
 }
 
 FUNCTION {sortify.names}
-{ " och\ " " " replace.substring
+{ " \chsWand{}\ " " " replace.substring
   " et~al." " zzz" replace.substring
   sortify
 }

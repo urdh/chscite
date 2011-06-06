@@ -22,7 +22,7 @@
 %<package>\NeedsTeXFormat{LaTeX2e}[1999/12/01]
 %<package>\ProvidesPackage{chscite}
 %<*package>
-    [2011/06/05 v1.0 Chalmers bibliography style]
+    [2011/06/06 v2.0 Chalmers bibliography style]
 %</package>
 %
 %<*driver>
@@ -37,11 +37,12 @@
 %</driver>
 % \fi
 %
-% \CheckSum{0}
+% \CheckSum{585}
 %
 %
 % \changes{v1.0}{2011/06/05}{Initial version}
-% \changes{v1.0b}{2011/06/05}{Fixed bug concerning editors}
+% \changes{v1.0b}{2011/06/06}{Fixed bug concerning editors}
+% \changes{v2.0}{2011/06/06}{Added language options}
 %
 % \GetFileInfo{chscite.dtx}
 %
@@ -65,7 +66,7 @@
 % \subsection{Planned future improvements}
 % \begin{itemize}
 % 	\item Remove unnessecary code from |.bst| and |.sty| files
-%		\item Add english language option
+%		\item Document the language options
 % \end{itemize}
 %
 % \section{Usage}
@@ -292,11 +293,52 @@
     \@tempswatrue
   \fi
 }
- 
+
+\DeclareOption{swedish}{%
+\newcommand{\chsWand}{och}%
+\newcommand{\chsWjanuary}{januari}%
+\newcommand{\chsWfebruary}{februari}%
+\newcommand{\chsWmarch}{mars}%
+\newcommand{\chsWapril}{april}%
+\newcommand{\chsWmay}{maj}%
+\newcommand{\chsWjune}{juni}%
+\newcommand{\chsWjuly}{juli}%
+\newcommand{\chsWaugust}{augusti}%
+\newcommand{\chsWseptember}{september}%
+\newcommand{\chsWoctober}{oktober}%
+\newcommand{\chsWnovember}{november}%
+\newcommand{\chsWdecember}{december}%
+\newcommand{\chsWprinting}{Under tryckning}%
+\newcommand{\chsWphdthesis}{Doktorsavhandling}%
+\newcommand{\chsWmscthesis}{Examensarbete}%
+\newcommand{\chsWinstitution}{inom}%
+\newcommand{\chsWin}{I}%}
+
+\DeclareOption{english}{%
+\newcommand{\chsWand}{and}%
+\newcommand{\chsWjanuary}{January}%
+\newcommand{\chsWfebruary}{February}%
+\newcommand{\chsWmarch}{March}%
+\newcommand{\chsWapril}{April}%
+\newcommand{\chsWmay}{May}%
+\newcommand{\chsWjune}{June}%
+\newcommand{\chsWjuly}{July}%
+\newcommand{\chsWaugust}{August}%
+\newcommand{\chsWseptember}{September}%
+\newcommand{\chsWoctober}{October}%
+\newcommand{\chsWnovember}{November}%
+\newcommand{\chsWdecember}{December}%
+\newcommand{\chsWprinting}{Unpublished}%
+\newcommand{\chsWphdthesis}{Ph.D.~thesis}%
+\newcommand{\chsWmscthesis}{Master's~thesis}%
+\newcommand{\chsWinstitution}{at}%
+\newcommand{\chsWin}{In}%
+}
+
 \AtEndDocument{\renewcommand{\chscite}{\CHS@checkcitations}}
+\@ifundefined{iflanguage}{\ExecuteOptions{english}}{\iflanguage{swedish}{\ExecuteOptions{swedish}}{\ExecuteOptions{english}}}
 \ProcessOptions*
 \bibliographystyle{chscite}
-\endinput
 %    \end{macrocode}
 %
 % \Finale
