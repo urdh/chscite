@@ -22,7 +22,7 @@
 %<package>\NeedsTeXFormat{LaTeX2e}[1999/12/01]
 %<package>\ProvidesPackage{chscite}
 %<*package>
-    [2011/06/06 v2.0 Chalmers bibliography style]
+    [2011/06/06 v2.0b Chalmers bibliography style]
 %</package>
 %
 %<*driver>
@@ -43,6 +43,7 @@
 % \changes{v1.0}{2011/06/05}{Initial version}
 % \changes{v1.0b}{2011/06/06}{Fixed bug concerning editors}
 % \changes{v2.0}{2011/06/06}{Added language options}
+% \changes{v2.0b}{2011/06/12}{Fixed a critical bug}
 %
 % \GetFileInfo{chscite.dtx}
 %
@@ -312,7 +313,8 @@
 \newcommand{\chsWphdthesis}{Doktorsavhandling}%
 \newcommand{\chsWmscthesis}{Examensarbete}%
 \newcommand{\chsWinstitution}{inom}%
-\newcommand{\chsWin}{I}%}
+\newcommand{\chsWin}{I}%
+}
 
 \DeclareOption{english}{%
 \newcommand{\chsWand}{and}%
