@@ -2,7 +2,7 @@
 %% This is file `chscite.bst',
 %% from the chscite package.
 %%
-%% It corresponds to version 2.0b.
+%% It corresponds to version 2.0c.
 %% 
 %% Copyright (C) 2011 by Simon Sigurdhsson <ssimon@student.chalmers.se>
 %% 
@@ -309,8 +309,8 @@ FUNCTION {format.pages}
 { pages empty$
     { "" }
     { pages multi.page.check
-	{ "ss.~" pages n.dashify * }
-	{ "s.~" pages * }
+	{ "\chsPages{}~" pages n.dashify * }
+	{ "\chsPage{}~" pages * }
       if$
     }
   if$
@@ -341,17 +341,6 @@ FUNCTION {format.chapter.pages}
 { 'format.pages
 }
 
-FUNCTION {format.in.ed.booktitle}
-{ booktitle empty$
-    { "" }
-    { editor empty$
-	{ ". I " booktitle emphasize * }
-	{ ". I " booktitle emphasize * ", " * format.book.editors * }
-      if$
-    }
-  if$
-}
-
 FUNCTION {empty.misc.check}
 { author empty$ title empty$ howpublished empty$
   month empty$ year empty$ note empty$
@@ -360,91 +349,6 @@ FUNCTION {empty.misc.check}
     { "all relevant fields are empty in " cite$ * warning$ }
     'skip$
   if$
-}
-
-FUNCTION {format.thesis.type}
-{ type empty$
-    'skip$
-    { pop$
-      type "t" change.case$
-    }
-  if$
-}
-
-FUNCTION {format.tr.number}
-{ type empty$
-    { "Teknisk rapport" }
-    'type
-  if$
-  number empty$
-    { "t" change.case$ }
-    { number tie.or.space.connect }
-  if$
-}
-
-FUNCTION {format.article.crossref}
-{ key empty$
-    { journal empty$
-	{ "need key or journal for " cite$ * " to crossref " * crossref *
-	  warning$
-	  ""
-	}
-	{ "i \emph{ " journal * "}" * " \cite{" * crossref * "}" *
-        }
-      if$
-    }
-    { " i \citeasnoun{" crossref * "}" * }
-  if$
-}
-
-FUNCTION {format.book.crossref}
-{ volume empty$
-    { "empty volume in " cite$ * "'s crossref of " * crossref * warning$
-      "i "
-    }
-    { "vol." volume embolden tie.or.space.connect
-      " av " *
-    }
-  if$
-  editor empty$
-  editor field.or.null author field.or.null =
-  or
-    { key empty$
-	{ series empty$
-	    { "need editor, key, or series for " cite$ * " to crossref " *
-	      crossref * warning$
-	      "" *
-	    }
-	    { "\emph{ " * series * "}" * " \cite{" * crossref * "}" *}
-	  if$
-	}
-	{ " \citeasnoun{" * crossref * "}" * }
-      if$
-    }
-    { " \citeasnoun{" * crossref * "}" * }
-  if$
-}
-
-FUNCTION {format.incoll.inproc.crossref}
-{ editor empty$
-  editor field.or.null author field.or.null =
-  or
-    {
-      key empty$
-	{ booktitle empty$
-	    { "need editor, key, or booktitle for " cite$ * " to crossref " *
-	      crossref * warning$
-	      ""
-	    }
-	    { "i \emph{ " booktitle * "}" * " \cite{" * crossref * "}" *}
-	  if$
-	}
-	{ " \emph{ i} \citeasnoun{" crossref * "}" * }
-      if$
-    }
-    {  " \emph{ i} \citeasnoun{" crossref * "}" * }
-  if$
- 
 }
 
 INTEGERS { len }
@@ -678,10 +582,10 @@ FUNCTION {article}
 		{ skip$ }
 		{ volume missing$
 			{ cite$ " has journal/series with no volume!" * warning$ }
-			{ "." journal.or.series emphasize tie.or.space.connect ", vol.~" volume * *
+			{ "." journal.or.series emphasize tie.or.space.connect ", \chsVolume{}~" volume * *
 				number missing$
 					{ "" }
-					{ ", nr~" number * }
+					{ ", \chsNumero{}~" number * }
 				if$ *
 			 	write$ }
 			if$
@@ -723,7 +627,7 @@ FUNCTION {book}
 		{ skip$ }
 		{ edition empty$
 			{ skip$ }
-			{ " " format.edition "upplagan." tie.or.space.connect * write$ }
+			{ " " format.edition "\chsEdition{}." tie.or.space.connect * write$ }
 			if$
 		}
 	if$

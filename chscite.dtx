@@ -22,7 +22,7 @@
 %<package>\NeedsTeXFormat{LaTeX2e}[1999/12/01]
 %<package>\ProvidesPackage{chscite}
 %<*package>
-    [2011/06/06 v2.0b Chalmers bibliography style]
+    [2011/06/22 v2.0c Chalmers bibliography style]
 %</package>
 %
 %<*driver>
@@ -37,13 +37,14 @@
 %</driver>
 % \fi
 %
-% \CheckSum{585}
+% \CheckSum{605}
 %
 %
 % \changes{v1.0}{2011/06/05}{Initial version}
 % \changes{v1.0b}{2011/06/06}{Fixed bug concerning editors}
 % \changes{v2.0}{2011/06/06}{Added language options}
 % \changes{v2.0b}{2011/06/12}{Fixed a critical bug}
+% \changes{v2.0c}{2011/06/22}{Improved translations, cleaned up \texttt{.bst} file}
 %
 % \GetFileInfo{chscite.dtx}
 %
@@ -314,6 +315,11 @@
 \newcommand{\chsWmscthesis}{Examensarbete}%
 \newcommand{\chsWinstitution}{inom}%
 \newcommand{\chsWin}{I}%
+\newcommand{\chsPage}{s.}%
+\newcommand{\chsPages}{ss.}%
+\newcommand{\chsEdition}{upplagan}%
+\newcommand{\chsNumero}{nr}%
+\newcommand{\chsVolume}{vol.}%
 }
 
 \DeclareOption{english}{%
@@ -335,6 +341,11 @@
 \newcommand{\chsWmscthesis}{Master's~thesis}%
 \newcommand{\chsWinstitution}{at}%
 \newcommand{\chsWin}{In}%
+\newcommand{\chsPage}{p.}%
+\newcommand{\chsPages}{pp.}%
+\newcommand{\chsEdition}{edition}%
+\newcommand{\chsNumero}{no.}%
+\newcommand{\chsVolume}{vol.}%
 }
 
 \AtEndDocument{\renewcommand{\chscite}{\CHS@checkcitations}}
