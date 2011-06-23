@@ -2,7 +2,7 @@
 %% This is file `chscite.bst',
 %% from the chscite package.
 %%
-%% It corresponds to version 2.0d.
+%% It corresponds to version 2.0e.
 %% 
 %% Copyright (C) 2011 by Simon Sigurdhsson <ssimon@student.chalmers.se>
 %% 
@@ -261,14 +261,14 @@ FUNCTION {either.or.check}
 FUNCTION {format.editors}
 { editor empty$
     { "" }
-    { "{vv~}{ll}{, jj}{, f.}" editor format.names "red. " tie.or.space.connect }
+    { "\chsWeditor{}" "{vv~}{ll}{, jj}{, f.}" editor format.names tie.or.space.connect }
   if$
 }
 
 FUNCTION {format.book.editors}
 { editor empty$
     { "" }
-    { "{vv~}{ll}{, jj}{, f.}" editor format.names "red. " tie.or.space.connect }
+    { "\chsWeditor{}" "{vv~}{ll}{, jj}{, f.}" editor format.names tie.or.space.connect }
   if$
 }
 

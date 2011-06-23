@@ -22,7 +22,7 @@
 %<package>\NeedsTeXFormat{LaTeX2e}[1999/12/01]
 %<package>\ProvidesPackage{chscite}
 %<*package>
-    [2011/06/23 v2.0d Chalmers bibliography style]
+    [2011/06/23 v2.0e Chalmers bibliography style]
 %</package>
 %
 %<*driver>
@@ -37,7 +37,7 @@
 %</driver>
 % \fi
 %
-% \CheckSum{675}
+% \CheckSum{681}
 %
 %
 % \changes{v1.0}{2011/06/05}{Initial version}
@@ -46,6 +46,7 @@
 % \changes{v2.0b}{2011/06/12}{Fixed a critical bug}
 % \changes{v2.0c}{2011/06/22}{Improved translations, cleaned up \texttt{.bst} file}
 % \changes{v2.0d}{2011/06/23}{Improved handling of editions}
+% \changes{v2.0e}{2011/06/23}{Fixed editor translation}
 %
 % \GetFileInfo{chscite.dtx}
 %
@@ -324,6 +325,7 @@
 \newcommand{\chsWnd}{}%
 \newcommand{\chsWrd}{}%
 \newcommand{\chsWth}{}%
+\newcommand{\chsWeditor}{}%
 
 \DeclareOption{swedish}{%
 \renewcommand{\chsWand}{och}%
@@ -353,6 +355,7 @@
 \renewcommand{\chsWnd}{:a}%
 \renewcommand{\chsWrd}{:e}%
 \renewcommand{\chsWth}{:e}%
+\renewcommand{\chsWeditor}{red.}%
 }
 
 \DeclareOption{english}{%
@@ -383,6 +386,7 @@
 \renewcommand{\chsWnd}{nd}%
 \renewcommand{\chsWrd}{rd}%
 \renewcommand{\chsWth}{th}%
+\renewcommand{\chsWeditor}{ed.}%
 }
 
 \AtEndDocument{\renewcommand{\chscite}{\CHS@checkcitations}}
