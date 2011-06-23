@@ -2,7 +2,7 @@
 %% This is file `chscite.bst',
 %% from the chscite package.
 %%
-%% It corresponds to version 2.0c.
+%% It corresponds to version 2.0d.
 %% 
 %% Copyright (C) 2011 by Simon Sigurdhsson <ssimon@student.chalmers.se>
 %% 
