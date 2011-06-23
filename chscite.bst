@@ -333,8 +333,8 @@ FUNCTION {format.pages}
 { pages empty$
     { "" }
     { pages multi.page.check
-	{ "\chsPages{}~" pages n.dashify * }
-	{ "\chsPage{}~" pages * }
+	{ "\chsPages{}" pages n.dashify tie.or.space.connect }
+	{ "\chsPage{}" pages tie.or.space.connect }
       if$
     }
   if$
@@ -588,100 +588,105 @@ FUNCTION {format.gen.pages}
 %% STYLES
 FUNCTION {article}
 { output.bibitem
-  make.list.label "(" tie.or.space.connect list.year * ") " * write$
+  make.list.label "(" tie.or.space.connect list.year * ")" *
   author "author" item.check
   title missing$
-    { skip$ }
-    { title write$ }
+    'skip$
+    { title tie.or.space.connect }
   if$
 	type$ "inproceedings" =
 	type$ "conference" =
 	or not
 	month missing$
 	or
-		{ skip$ }
-		{ ";" month "~" year * * tie.or.space.connect write$ }
+		'skip$
+		{ ";" month year tie.or.space.connect tie.or.space.connect }
 	if$
 	journal missing$
-		{ skip$ }
+		'skip$
 		{ volume missing$
 			{ cite$ " has journal/series with no volume!" * warning$ }
-			{ "." journal.or.series emphasize tie.or.space.connect ", \chsVolume{}~" volume * *
+			{ add.period$ journal.or.series emphasize tie.or.space.connect "," "\chsVolume{}" tie.or.space.connect volume tie.or.space.connect *
 				number missing$
-					{ "" }
-					{ ", \chsNumero{}~" number * }
-				if$ *
-			 	write$ }
+					'skip$
+					{ "," "\chsNumero{}" number tie.or.space.connect tie.or.space.connect * }
+				if$
+			 	}
 			if$
 		}
 		if$
 		pages missing$
-			{ skip$ }
-			{ format.gen.pages write$ }
+			'skip$
+			{ format.gen.pages * }
 		if$
-		"." write$
+		add.period$ *
   
   fin.entry
 }
 
 FUNCTION {book}
 { output.bibitem
-  make.list.label "(" tie.or.space.connect list.year * ") " * write$
+  make.list.label "(" tie.or.space.connect list.year * ")" *
   author "author" item.check
 	chapter missing$
-		{ skip$ }
-		{ chapter "." * "\chsWin{} " tie.or.space.connect write$ }
+		'skip$
+		{ chapter add.period$ "\chsWin{}" tie.or.space.connect tie.or.space.connect }
 	if$
   title missing$
-    { skip$ }
-    { title emphasize write$ }
+    'skip$
+    { title emphasize tie.or.space.connect }
   if$
 	editor missing$
-		{ skip$ }
-		{ "," format.book.editors tie.or.space.connect write$ }
+		'skip$
+		{ "," format.book.editors tie.or.space.connect }
 	if$
 	pages missing$
 	journal missing$
 	not or
-		{ skip$ }
-		{ format.gen.pages write$ }
+		'skip$
+		{ format.gen.pages * }
 	if$
-	"." write$
+	add.period$
   edition missing$
-		{ skip$ }
+		'skip$
 		{ edition empty$
-			{ skip$ }
-			{ " " format.edition "\chsEdition{}." tie.or.space.connect * write$ }
+			'skip$
+			{ format.edition "\chsEdition{}" add.period$ tie.or.space.connect tie.or.space.connect }
 			if$
 		}
 	if$
  	publisher missing$
 	school missing$
 	and
-		{ skip$ }
+		'skip$
 		{ address missing$
 			{ cite$ " has publisher with no address!" * warning$ }
-			{ " " address ":" * * publisher.or.school tie.or.space.connect "." * write$ }
+			{ address ":" * publisher.or.school tie.or.space.connect add.period$ tie.or.space.connect }
 			if$
 		}
 	if$
 		series missing$
 		journal missing$ 
 		and
-			{ skip$ }
+			'skip$
 			{ volume missing$
 				{ cite$ " has journal/series with no volume!" * warning$ }
-				{ " (" journal.or.series ":" * * volume tie.or.space.connect
+				{ "(" journal.or.series ":" * * volume tie.or.space.connect
 					series missing$
-					{ "" }
-					{ format.gen.pages }
-					if$ *
-					")." * write$ }
+					'skip$
+					{ format.gen.pages * }
+					if$
+					")" add.period$ * tie.or.space.connect * }
 				if$
 			}
 		if$
   
-  fin.entry
+	type$ "mastersthesis" =
+	type$ "phdthesis" =
+	or
+	'skip$
+  { write$ fin.entry }
+	if$
 }
 
 FUNCTION {booklet} { book }
@@ -692,29 +697,28 @@ FUNCTION {incollection} { book }
 
 FUNCTION {inproceedings}
 { output.bibitem
-  make.list.label "(" tie.or.space.connect list.year * ") " * write$
+  make.list.label "(" tie.or.space.connect list.year * ")" *
   author "author" item.check
 	booktitle missing$
-		{ title emphasize }
-		{ title ". \chsWin{} " booktitle emphasize * * }
+		{ title emphasize tie.or.space.connect }
+		{ title add.period$ "\chsWin{}" tie.or.space.connect booktitle emphasize tie.or.space.connect tie.or.space.connect }
 	if$	
 	month missing$
-		{ "" }
+		'skip$
 		{ booktitle missing$
-				{ "." }
-				{ ";" }
+				{ add.period$ }
+				{ ";" * }
 			if$
 			month "~" year * * tie.or.space.connect
 		}
-	if$ *
+	if$
 	address missing$
-		{ "" }
-		{ "," address tie.or.space.connect }
-	if$ *
- 	"." *
+		'skip$
+		{ "," address tie.or.space.connect add.period$ * }
+	if$
 	pages missing$
-		{ skip$ }
-		{ format.pages tie.or.space.connect "." * }
+		'skip$
+		{ format.pages add.period$ tie.or.space.connect }
 	if$ 
 	write$
   
@@ -728,57 +732,60 @@ FUNCTION {manual}
 
 FUNCTION {mastersthesis}
 { book
-	"(" "\chsWmscthesis{}" *
+	"(\chsWmscthesis{}" tie.or.space.connect
 	note missing$
-		{ "" }
-		{ " \chsWinstitution{}" note tie.or.space.connect }
-	if$ *
-	")." * write$
+		'skip$
+		{ "\chsWinstitution{}" note tie.or.space.connect tie.or.space.connect }
+	if$
+	")" add.period$ * write$
+	fin.entry
 }
 
 FUNCTION {phdthesis}
 { book
-	"(" "\chsWphdthesis{}" *
+	"(\chsWphdthesis{}" tie.or.space.connect
 	note missing$
-		{ "" }
-		{ " \chsWinstitution{}" note tie.or.space.connect }
-	if$ *
-	")." * write$
+		'skip$
+		{ "\chsWinstitution{}" note tie.or.space.connect tie.or.space.connect }
+	if$
+	")" add.period$ * write$
+	fin.entry
 }
 
 FUNCTION {proceedings} { inproceedings }
 
 FUNCTION {unpublished}
 { output.bibitem
-  make.list.label "(" tie.or.space.connect list.year * ") " * write$
+  make.list.label "(" tie.or.space.connect list.year * ")" *
   author "author" item.check
 	chapter missing$
-		{ skip$ }
-		{ chapter "." * "\chsWin{} " tie.or.space.connect write$ }
+		'skip$
+		{ chapter add.period$ "\chsWin{}" tie.or.space.connect tie.or.space.connect tie.or.space.connect }
 	if$
   title missing$
-    { skip$ }
-    { title emphasize write$ }
+    'skip$
+    { title emphasize tie.or.space.connect }
   if$
 	editor missing$
-		{ skip$ }
-		{ "," format.book.editors tie.or.space.connect write$ }
+		'skip$
+		{ "," format.book.editors tie.or.space.connect * }
 	if$
 	pages missing$
 	journal missing$
 	not or
-		{ skip$ }
-		{ format.gen.pages write$ }
+		'skip$
+		{ format.gen.pages * }
 	if$
-	". \chsWprinting." write$
+	add.period$ "\chsWprinting" add.period$ tie.or.space.connect
  	publisher missing$
-		{ skip$ }
+		'skip$
 		{ address missing$
 			{ cite$ " has publisher with no address!" * warning$ }
-			{ " " address ":" * * publisher.or.school tie.or.space.connect "." * write$ }
+			{ address ":" * publisher.or.school tie.or.space.connect add.period$ tie.or.space.connect }
 			if$
 		}
 	if$
+	write$
   
   fin.entry
 }
