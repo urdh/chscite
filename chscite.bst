@@ -91,6 +91,30 @@ FUNCTION {new.block}
   if$
 }
 
+FUNCTION {lastint}
+{
+  #-1 #1 substring$ chr.to.int$ "0" chr.to.int$ -
+}
+
+FUNCTION {format.number.th}
+{
+  duplicate$ duplicate$
+  #1 =
+  { pop$ pop$ "\chsWst{}" pop$ "st" }
+  {
+    #2 =
+    { pop$ "\chsWnd{}" pop$ "nd" }
+    {
+      #3 =
+      { "\chsWrd{}" pop$ "rd" }
+      { "\chsWth{}" pop$ "th" }
+      if$
+    }
+    if$
+  }
+  if$
+}
+
 FUNCTION {not}
 {   { #0 }
     { #1 }
@@ -280,7 +304,7 @@ FUNCTION {format.number.series}
 }
 
 FUNCTION {format.edition}
-{ edition ":e" *
+{ edition edition lastint format.number.th *
 }
 
 INTEGERS { multiresult }
