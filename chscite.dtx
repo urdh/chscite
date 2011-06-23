@@ -149,7 +149,7 @@
 }
 
 \def\@enamedef#1{\expandafter\def\csname #1\expandafter\endcsname\expandafter}
-\newcommand{\CHS@name}[1]{\csname \CHS@citemode#1\endcsname}
+\newcommand{\CHS@name}[1]{\csname CHS@df@#1\endcsname}
 \newcommand{\CHS@fname}[1]{\csname CHS@fn@#1\endcsname}
 \newcommand{\CHS@aname}[1]{\csname CHS@an@#1\endcsname}
 \newcommand{\CHS@year}[1]{\csname CHS@yr@#1\endcsname}
@@ -272,7 +272,6 @@
 {}{, #1}\chsright}%
 }
 
-\newcommand{\CHS@citemode}{\csname CHS@df\endcsname}
 \newcommand{\CHS@hysep}{\null}
 \newcommand{\CHS@hisep}{,}
 \newcommand{\chsleft}{(}
