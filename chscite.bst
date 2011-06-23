@@ -100,14 +100,14 @@ FUNCTION {format.number.th}
 {
   duplicate$ duplicate$
   #1 =
-  { pop$ pop$ "\chsWst{}" pop$ "st" }
+  { pop$ pop$ "\chsWst{}" }
   {
     #2 =
-    { pop$ "\chsWnd{}" pop$ "nd" }
+    { pop$ "\chsWnd{}" }
     {
       #3 =
-      { "\chsWrd{}" pop$ "rd" }
-      { "\chsWth{}" pop$ "th" }
+      { "\chsWrd{}" }
+      { "\chsWth{}" }
       if$
     }
     if$

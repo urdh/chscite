@@ -319,6 +319,10 @@
 \newcommand{\chsEdition}{}%
 \newcommand{\chsNumero}{}%
 \newcommand{\chsVolume}{}%
+\newcommand{\chsWst}{}%
+\newcommand{\chsWnd}{}%
+\newcommand{\chsWrd}{}%
+\newcommand{\chsWth}{}%
 
 \DeclareOption{swedish}{%
 \renewcommand{\chsWand}{och}%
@@ -344,6 +348,10 @@
 \renewcommand{\chsEdition}{upplagan}%
 \renewcommand{\chsNumero}{nr}%
 \renewcommand{\chsVolume}{vol.}%
+\renewcommand{\chsWst}{:a}%
+\renewcommand{\chsWnd}{:a}%
+\renewcommand{\chsWrd}{:e}%
+\renewcommand{\chsWth}{:e}%
 }
 
 \DeclareOption{english}{%
@@ -370,6 +378,10 @@
 \renewcommand{\chsEdition}{edition}%
 \renewcommand{\chsNumero}{no.}%
 \renewcommand{\chsVolume}{vol.}%
+\renewcommand{\chsWst}{st}%
+\renewcommand{\chsWnd}{nd}%
+\renewcommand{\chsWrd}{rd}%
+\renewcommand{\chsWth}{th}%
 }
 
 \AtEndDocument{\renewcommand{\chscite}{\CHS@checkcitations}}
