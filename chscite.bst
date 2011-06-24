@@ -656,6 +656,10 @@ FUNCTION {book}
 			if$
 		}
 	if$
+	URL missing$
+	  'skip$
+	  { "[\chsWelectronic]" tie.or.space.connect }
+	if$
  	publisher missing$
 	school missing$
 	and
@@ -776,6 +780,10 @@ FUNCTION {unpublished}
 	not or
 		'skip$
 		{ format.gen.pages * }
+	if$
+	URL missing$
+	  'skip$
+	  { "[\chsWelectronic]" tie.or.space.connect }
 	if$
 	add.period$ "\chsWprinting" add.period$ tie.or.space.connect
  	publisher missing$
