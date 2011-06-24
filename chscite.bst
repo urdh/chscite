@@ -78,12 +78,6 @@ FUNCTION {item.check}
   if$
 }
 
-FUNCTION {fin.entry}
-{ add.period$
-  write$
-  newline$
-}
-
 FUNCTION {new.block}
 { output.state before.all =
     'skip$
@@ -163,9 +157,16 @@ FUNCTION {quote}
 
 FUNCTION {write.url}
 { URL empty$
-    { skip$ }
-    { "\chsurl{" URL * "}" * write$ newline$ }
+    'skip$
+    { " \chsurl{" URL * "}" add.period$ * write$ newline$ }
   if$
+}
+
+FUNCTION {fin.entry}
+{ add.period$
+  write$
+  write.url
+  newline$
 }
 
 INTEGERS { nameptr namesleft numnames }
