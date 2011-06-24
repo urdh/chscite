@@ -177,7 +177,8 @@ FUNCTION {format.names}
   #1 'nameptr :=
   s num.names$ 'numnames :=
   numnames 'namesleft :=
-    { namesleft #0 > }
+  #3 numnames >
+  {  { namesleft #0 > }
     { s nameptr f format.name$ 't :=
       nameptr #1 >
 	{ namesleft #1 >
@@ -195,6 +196,9 @@ FUNCTION {format.names}
       namesleft #1 - 'namesleft :=
     }
   while$
+  }
+  { s nameptr f format.name$ " et~al." * }
+  if$
 }
 
 FUNCTION {format.authors}
@@ -416,7 +420,7 @@ FUNCTION {format.lab.names.abbr}
 { 's :=
   s num.names$ 'numnames :=
   numnames #1 >
-    { numnames #2 >
+    { numnames #3 >
 	{ s #1 "{vv~}{ll}" format.name$ " et~al." * }
 	{ s #2 "{ff }{vv }{ll}{ jj}" format.name$ "others" =
             { s #1 "{vv~}{ll}" format.name$ " et~al." * }
@@ -513,8 +517,8 @@ FUNCTION {make.full.label}
 }
 
 FUNCTION {make.abbr.label}
-{ etal.allowed
-    { author.field field.used =
+{     
+      author.field field.used =
         { author format.lab.names.abbr }
         { editor.field field.used =
             { editor format.lab.names.abbr }
@@ -534,26 +538,12 @@ FUNCTION {make.abbr.label}
           if$
         }
       if$
-    }
-    { make.full.label }
-  if$
 }
 
 FUNCTION {output.bibitem}
 { newline$
-  etal.allowed        %%%XXX change
-  etal.required
-  and
-    {
-      "\chsitem[" write$
-      make.abbr.label write$
-      "]{" write$
-    }
-    {
-      "\chsitem{" write$
-    }
-  if$
-  make.full.label write$
+  "\chsitem{" write$
+  make.abbr.label write$
   "}{" write$
   list.year write$
   "}{" write$
