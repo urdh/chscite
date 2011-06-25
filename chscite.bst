@@ -17,7 +17,8 @@
 %% 1999/12/01 or later.
 %%
 ENTRY
-  { address
+  {
+    address
     author
     booktitle
     chapter
@@ -41,13 +42,14 @@ ENTRY
     volume
     year
   }
-  { field.used etal.allowed etal.required }
+  { field.used }
   { extra.label sort.label list.year }
 
 INTEGERS { output.state before.all mid.sentence after.sentence after.block }
 
 FUNCTION {init.state.consts}
-{ #0 'before.all :=
+{
+  #0 'before.all :=
   #1 'mid.sentence :=
   #2 'after.sentence :=
   #3 'after.block :=
@@ -55,33 +57,20 @@ FUNCTION {init.state.consts}
 
 STRINGS { s t f }
 
-FUNCTION {output}
-{ duplicate$ empty$
-    'pop$
-    'write$
-  if$
-}
-
-FUNCTION {output.check}
-{ 't :=
-  duplicate$ empty$
-    { pop$ "empty " t * " in " * cite$ * warning$ }
-    'write$
-  if$
-}
-
 FUNCTION {item.check}
-{ 't :=
+{
+  't :=
   empty$
-    { "empty " t * " in " * cite$ * warning$ }
-    { skip$ }
+  { "empty " t * " in " * cite$ * warning$ }
+  { skip$ }
   if$
 }
 
 FUNCTION {new.block}
-{ output.state before.all =
-    'skip$
-    { after.block 'output.state := }
+{
+  output.state before.all =
+  'skip$
+  { after.block 'output.state := }
   if$
 }
 
@@ -110,60 +99,53 @@ FUNCTION {format.number.th}
 }
 
 FUNCTION {not}
-{   { #0 }
-    { #1 }
+{
+  { #0 }
+  { #1 }
   if$
 }
 
 FUNCTION {and}
-{   'skip$
-    { pop$ #0 }
+{
+  'skip$
+  { pop$ #0 }
   if$
 }
 
 FUNCTION {or}
-{   { pop$ #1 }
-    'skip$
+{
+  { pop$ #1 }
+  'skip$
   if$
 }
 
 FUNCTION {field.or.null}
-{ duplicate$ empty$
-    { pop$ "" }
-    'skip$
+{
+  duplicate$ empty$
+  { pop$ "" }
+  'skip$
   if$
 }
 
 FUNCTION {emphasize}
-{ duplicate$ empty$
-    { pop$ "" }
-    { "\emph{" swap$ * "}" * }
-  if$
-}
-
-FUNCTION {embolden}
-{ duplicate$ empty$
-    { pop$ "" }
-    { "\textbf{" swap$ * "}" * }
-  if$
-}
-
-FUNCTION {quote}
-{ duplicate$ empty$
-    { pop$ "" }
-    { "'" swap$ * "'" * }
+{
+  duplicate$ empty$
+  { pop$ "" }
+  { "\emph{" swap$ * "}" * }
   if$
 }
 
 FUNCTION {write.url}
-{ URL empty$
-    'skip$
-    { " \chsurl{" URL * "}" add.period$ * write$ newline$ }
+{
+  URL empty$
+  'skip$
+  { " \chsurl{" URL * "}" add.period$ * write$ newline$ }
   if$
 }
 
 FUNCTION {fin.entry}
-{ add.period$
+{
+  add.period$
   write$
   write.url
   newline$
@@ -172,222 +154,172 @@ FUNCTION {fin.entry}
 INTEGERS { nameptr namesleft numnames }
 
 FUNCTION {format.names}
-{ 's :=
+{
+  's :=
   'f :=
   #1 'nameptr :=
   s num.names$ 'numnames :=
   numnames 'namesleft :=
   #3 numnames >
-  {  { namesleft #0 > }
-    { s nameptr f format.name$ 't :=
+  {
+    { namesleft #0 > }
+    {
+      s nameptr f format.name$ 't :=
       nameptr #1 >
-	{ namesleft #1 >
-	    { ", " * t * }
-	    { t "others" =
-		{ " et~al." * }
-		{ " \chsWand{}\ " * t * }
+	    {
+	      namesleft #1 >
+	      { ", " * t * }
+	      {
+	        t "others" =
+		      { " et~al." * }
+		      { " \chsWand{}\ " * t * }
+	        if$
+	      }
 	      if$
 	    }
-	  if$
-	}
-	't
+	    't
       if$
       nameptr #1 + 'nameptr :=
       namesleft #1 - 'namesleft :=
     }
-  while$
+    while$
   }
   { s nameptr f format.name$ " et~al." * }
   if$
 }
 
 FUNCTION {format.authors}
-{ author empty$
-    { "" }
-    { "{vv~}{ll}{, jj}{, f.}" author format.names }
-  if$
-}
-
-FUNCTION {format.title}
-{ title empty$
-    { "" }
-    { title "t" change.case$ emphasize }
+{
+  author empty$
+  { "" }
+  { "{vv~}{ll}{, jj}{, f.}" author format.names }
   if$
 }
 
 FUNCTION {n.dashify}
-{ 't :=
+{
+  't :=
   ""
-    { t empty$ not }
-    { t #1 #1 substring$ "-" =
-	{ t #1 #2 substring$ "--" = not
-	    { "--" *
+  { t empty$ not }
+  {
+    t #1 #1 substring$ "-" =
+	  {
+	    t #1 #2 substring$ "--" = not
+	    {
+	      "--" *
 	      t #2 global.max$ substring$ 't :=
 	    }
-	    {   { t #1 #1 substring$ "-" = }
-		{ "-" *
-		  t #2 global.max$ substring$ 't :=
-		}
+	    {
+	      { t #1 #1 substring$ "-" = }
+		    {
+		      "-" *
+		      t #2 global.max$ substring$ 't :=
+		    }
 	      while$
 	    }
-	  if$
-	}
-	{ t #1 #1 substring$ *
-	  t #2 global.max$ substring$ 't :=
-	}
-      if$
-    }
+	    if$
+	  }
+	  {
+	    t #1 #1 substring$ *
+	    t #2 global.max$ substring$ 't :=
+	  }
+    if$
+  }
   while$
 }
 
 FUNCTION {format.btitle}
-{ title "." * emphasize
-}
-
-FUNCTION {format.ctitle}
-{ title ".~" *
+{
+  title "." * emphasize
 }
 
 FUNCTION {tie.or.space.connect}
-{ duplicate$ text.length$ #3 <
-    { "~" }
-    { " " }
+{
+  duplicate$ text.length$ #3 <
+  { "~" }
+  { " " }
   if$
   swap$ * *
 }
 
 FUNCTION {either.or.check}
-{ empty$
-    'pop$
-    { "can't use both " swap$ * " fields in " * cite$ * warning$ }
+{
+  empty$
+  'pop$
+  { "can't use both " swap$ * " fields in " * cite$ * warning$ }
   if$
 }
 
 FUNCTION {format.editors}
-{ editor empty$
-    { "" }
-    { "\chsWeditor{}" "{vv~}{ll}{, jj}{, f.}" editor format.names tie.or.space.connect }
+{
+  editor empty$
+  { "" }
+  { "\chsWeditor{}" "{vv~}{ll}{, jj}{, f.}" editor format.names tie.or.space.connect }
   if$
 }
 
 FUNCTION {format.book.editors}
-{ editor empty$
-    { "" }
-    { "\chsWeditor{}" "{vv~}{ll}{, jj}{, f.}" editor format.names tie.or.space.connect }
-  if$
-}
-
-FUNCTION {format.bvolume}
-{ volume empty$
-    { "" }
-    { series empty$
-			{ "vol." volume tie.or.space.connect }
-			{ "(" series ":" * * volume tie.or.space.connect ")" * }
-      if$
-      "volume and number" number either.or.check
-    }
-  if$
-}
-
-FUNCTION {format.number.series}
-{ volume empty$
-    { number empty$
-			{ series empty$
-				skip$
-				{ "(" series field.or.null ")" * * }
-				if$
-			}
-			{ series empty$
-	    	{ "there's a number but no series in " cite$ * warning$ }
-	    	{ "(" series ":" * * number tie.or.space.connect ")" * }
-	  		if$
-			}
-      if$
-    }
-    { "" }
+{
+  editor empty$
+  { "" }
+  { "\chsWeditor{}" "{vv~}{ll}{, jj}{, f.}" editor format.names tie.or.space.connect }
   if$
 }
 
 FUNCTION {format.edition}
-{ edition edition lastint format.number.th *
+{
+  edition edition lastint format.number.th *
 }
 
 INTEGERS { multiresult }
 
 FUNCTION {multi.page.check}
-{ 't :=
+{
+  't :=
   #0 'multiresult :=
-    { multiresult not
-      t empty$ not
-      and
-    }
-    { t #1 #1 substring$
-      duplicate$ "-" =
-      swap$ duplicate$ "," =
-      swap$ "+" =
-      or or
-	{ #1 'multiresult := }
-	{ t #2 global.max$ substring$ 't := }
-      if$
-    }
+  {
+    multiresult not
+    t empty$ not
+    and
+  }
+  {
+    t #1 #1 substring$
+    duplicate$ "-" =
+    swap$ duplicate$ "," =
+    swap$ "+" =
+    or or
+	  { #1 'multiresult := }
+	  { t #2 global.max$ substring$ 't := }
+    if$
+  }
   while$
   multiresult
 }
 
 FUNCTION {format.pages}
-{ pages empty$
-    { "" }
-    { pages multi.page.check
-	{ "\chsPages{}" pages n.dashify tie.or.space.connect }
-	{ "\chsPage{}" pages tie.or.space.connect }
-      if$
-    }
-  if$
-}
-
-FUNCTION {format.vol.num.pages}
-{ "vol. " * volume field.or.null
-  number empty$
-    'skip$
-    { ", nr. " number * "" * *
-      volume empty$
-	{ "there's a number but no volume in " cite$ * warning$ }
-	'skip$
-      if$
-    }
-  if$
+{
   pages empty$
-    'skip$
-    { duplicate$ empty$
-	{ pop$ format.pages }
-	{ ",~" * format.pages n.dashify * }
-      if$
-    }
-  if$
-}
-
-FUNCTION {format.chapter.pages}
-{ 'format.pages
-}
-
-FUNCTION {empty.misc.check}
-{ author empty$ title empty$ howpublished empty$
-  month empty$ year empty$ note empty$
-  and and and and and
-  key empty$ not and
-    { "all relevant fields are empty in " cite$ * warning$ }
-    'skip$
+  { "" }
+  {
+    ","
+    pages multi.page.check
+	  { "\chsPages{}" pages n.dashify tie.or.space.connect }
+	  { "\chsPage{}" pages tie.or.space.connect }
+    if$
+    tie.or.space.connect
+  }
   if$
 }
 
 INTEGERS { len }
 
 FUNCTION {chop.word}
-{ 's :=
+{
+  's :=
   'len :=
   s #1 len substring$ =
-    { s len #1 + global.max$ substring$ }
-    's
+  { s len #1 + global.max$ substring$ }
+  's
   if$
 }
 
@@ -395,75 +327,88 @@ INTEGERS { ind tsslen }
 
 STRINGS { tss ret rss istr }
 
-FUNCTION {replace.substring}{
+FUNCTION {replace.substring}
+{
   'rss :=
   'tss :=
   'istr :=
   "" 'ret :=
   tss text.length$ 'tsslen :=
   #1 'ind :=
-    { istr ind tsslen substring$ "" = not }
-    { istr ind tsslen substring$ tss =
-        { ret rss * 'ret :=
-          ind tsslen + 'ind :=
-        }
-        { ret istr ind #1 substring$ * 'ret :=
-          ind #1 + 'ind :=
-        }
-      if$
+  { istr ind tsslen substring$ "" = not }
+  {
+    istr ind tsslen substring$ tss =
+    {
+      ret rss * 'ret :=
+      ind tsslen + 'ind :=
     }
+    {
+      ret istr ind #1 substring$ * 'ret :=
+      ind #1 + 'ind :=
+    }
+    if$
+  }
   while$
   ret
 }
 
 FUNCTION {format.lab.names.abbr}
-{ 's :=
+{
+  's :=
   s num.names$ 'numnames :=
   numnames #1 >
-    { numnames #3 >
-	{ s #1 "{vv~}{ll}" format.name$ " et~al." * }
-	{ s #2 "{ff }{vv }{ll}{ jj}" format.name$ "others" =
-            { s #1 "{vv~}{ll}" format.name$ " et~al." * }
-	    { s #1 "{vv~}{ll}" format.name$ " \chsWand{}\ " *
-              s #2 "{vv~}{ll}" format.name$ * 
-            }
-          if$
-        }
+  {
+    numnames #3 >
+	  { s #1 "{vv~}{ll}" format.name$ " et~al." * }
+	  {
+	    s #2 "{ff }{vv }{ll}{ jj}" format.name$ "others" =
+      { s #1 "{vv~}{ll}" format.name$ " et~al." * }
+	    {
+	      s #1 "{vv~}{ll}" format.name$ " \chsWand{}\ " *
+        s #2 "{vv~}{ll}" format.name$ * 
+      }
       if$
     }
-    { s #1 "{vv~}{ll}" format.name$ }
+    if$
+  }
+  { s #1 "{vv~}{ll}" format.name$ }
   if$
 }
 
 FUNCTION {format.lab.names.full}
-{ 's :=
+{
+  's :=
   #1 'nameptr :=
   s num.names$ 'numnames :=
   numnames 'namesleft :=
-    { namesleft #0 > }
-    { s nameptr "{vv~}{ll}" format.name$ 't :=
-      nameptr #1 >
-	{ namesleft #1 >
+  { namesleft #0 > }
+  {
+    s nameptr "{vv~}{ll}" format.name$ 't :=
+    nameptr #1 >
+	  {
+	    namesleft #1 >
 	    { ", " * t * }
-	    { t "others" =
-		{ " et~al." * }
-		{ " \chsWand{}\ " * t * }
+	    {
+	      t "others" =
+		    { " et~al." * }
+		    { " \chsWand{}\ " * t * }
 	      if$
 	    }
-	  if$
-	}
-	't
-      if$
-      nameptr #1 + 'nameptr :=
-      namesleft #1 - 'namesleft :=
-    }
+	    if$
+	  }
+	  't
+    if$
+    nameptr #1 + 'nameptr :=
+    namesleft #1 - 'namesleft :=
+  }
   while$
 }
 
 INTEGERS { author.field editor.field organization.field title.field key.field }
 
 FUNCTION {init.field.constants}
-{ #0 'author.field :=
+{
+  #0 'author.field :=
   #1 'editor.field :=
   #2 'organization.field :=
   #3 'title.field :=
@@ -471,77 +416,92 @@ FUNCTION {init.field.constants}
 }
 
 FUNCTION {make.list.label}
-{ author.field field.used =
-    { format.authors }
-    { editor.field field.used =
-        { format.editors }
-        { organization.field field.used =
-            { "The " #4 organization chop.word #3 text.prefix$ }
-            { title.field field.used =
-                { format.btitle }
-                { key.field field.used =
-                    { key #3 text.prefix$ }
-                    { "Internal error :001 on " cite$ * " label" * warning$ }
-                  if$
-                }
-              if$
-            }
+{
+  author.field field.used =
+  { format.authors }
+  {
+    editor.field field.used =
+    { format.editors }
+    {
+      organization.field field.used =
+      { "The " #4 organization chop.word #3 text.prefix$ }
+      {
+        title.field field.used =
+        { format.btitle }
+        {
+          key.field field.used =
+          { key #3 text.prefix$ }
+          { "Internal error :001 on " cite$ * " label" * warning$ }
           if$
         }
+        if$
+      }
       if$
     }
+    if$
+  }
   if$
 }
 
 FUNCTION {make.full.label}
-{ author.field field.used =
-    { author format.lab.names.full }
-    { editor.field field.used =
-        { editor format.lab.names.full }
-        { organization.field field.used =
-            { "The " #4 organization chop.word #3 text.prefix$ }
-            { title.field field.used =
-                { format.btitle }
-                { key.field field.used =
-                    { key #3 text.prefix$ }
-                    { "Internal error :001 on " cite$ * " label" * warning$ }
-                  if$
-                }
-              if$
-            }
+{
+  author.field field.used =
+  { author format.lab.names.full }
+  {
+    editor.field field.used =
+    { editor format.lab.names.full }
+    {
+      organization.field field.used =
+      { "The " #4 organization chop.word #3 text.prefix$ }
+      {
+        title.field field.used =
+        { format.btitle }
+        {
+          key.field field.used =
+          { key #3 text.prefix$ }
+          { "Internal error :001 on " cite$ * " label" * warning$ }
           if$
         }
+        if$
+      }
       if$
     }
+    if$
+  }
   if$
 }
 
 FUNCTION {make.abbr.label}
 {     
-      author.field field.used =
-        { author format.lab.names.abbr }
-        { editor.field field.used =
-            { editor format.lab.names.abbr }
-            { organization.field field.used =
-                { "The " #4 organization chop.word #3 text.prefix$ }
-                { title.field field.used =
-                    { format.btitle }
-                    { key.field field.used =
-                        { key #3 text.prefix$ }
-                        { "Internal error :001 on " cite$ * " label" * warning$}
-                      if$
-                    }
-                  if$
-                }
-              if$
-            }
-          if$
-        }
-      if$
+	author.field field.used =
+	{ author format.lab.names.abbr }
+	{
+	  editor.field field.used =
+	  { editor format.lab.names.abbr }
+	  {
+	    organization.field field.used =
+	    { "The " #4 organization chop.word #3 text.prefix$ }
+	    {
+	      title.field field.used =
+	      { format.btitle }
+	      {
+	        key.field field.used =
+	        { key #3 text.prefix$ }
+	        { "Internal error :001 on " cite$ * " label" * warning$ }
+	        if$
+	      }
+	      if$
+	    }
+	    if$
+	  }
+	  if$
+	}
+	if$
 }
 
 FUNCTION {output.bibitem}
-{ newline$
+{
+  newline$
   "\chsitem{" write$
   make.abbr.label write$
   "}{" write$
@@ -554,27 +514,21 @@ FUNCTION {output.bibitem}
   before.all 'output.state :=
 }
 
-
-FUNCTION {list.label.output}
-{ make.list.label " " * write$
-}
-
 FUNCTION {journal.or.series}
-{ journal missing$
+{
+  journal missing$
 	{ series }
 	{ journal }
 	if$
 }
 
 FUNCTION {publisher.or.school}
-{ publisher missing$
+{
+  publisher missing$
 	{ school }
 	{ publisher }
 	if$
 }
-
-FUNCTION {format.gen.pages}
-{ "," format.pages tie.or.space.connect }
 
 %% STYLES
 FUNCTION {article}
@@ -608,7 +562,7 @@ FUNCTION {article}
 		if$
 		pages missing$
 			'skip$
-			{ format.gen.pages * }
+			{ format.pages * }
 		if$
 		add.period$ *
   
@@ -635,7 +589,7 @@ FUNCTION {book}
 	journal missing$
 	not or
 		'skip$
-		{ format.gen.pages * }
+		{ format.pages * }
 	if$
 	add.period$
   edition missing$
@@ -669,7 +623,7 @@ FUNCTION {book}
 				{ "(" journal.or.series ":" * * volume tie.or.space.connect
 					series missing$
 					'skip$
-					{ format.gen.pages * }
+					{ format.pages * }
 					if$
 					")" add.period$ * tie.or.space.connect * }
 				if$
@@ -769,7 +723,7 @@ FUNCTION {unpublished}
 	journal missing$
 	not or
 		'skip$
-		{ format.gen.pages * }
+		{ format.pages * }
 	if$
 	add.period$ 
 	URL missing$
@@ -798,68 +752,37 @@ FUNCTION {techreport}
 FUNCTION {default.type} { misc }
 
 MACRO {jan} {"\chsWjanuary{}"}
-
 MACRO {feb} {"\chsWfebruary{}"}
-
 MACRO {mar} {"\chsWmarch{}"}
-
 MACRO {apr} {"\chsWapril{}"}
-
 MACRO {may} {"\chsWmay{}"}
-
 MACRO {jun} {"\chsWjune{}"}
-
 MACRO {jul} {"\chsWjuly{}"}
-
 MACRO {aug} {"\chsWaugust{}"}
-
 MACRO {sep} {"\chsWseptember{}"}
-
 MACRO {oct} {"\chsWoctober{}"}
-
 MACRO {nov} {"\chsWnovember{}"}
-
 MACRO {dec} {"\chsWdecember{}"}
 
 MACRO {acmcs} {"ACM Computing Surveys"}
-
 MACRO {acta} {"Acta Informatica"}
-
 MACRO {cacm} {"Communications of the ACM"}
-
 MACRO {ibmjrd} {"IBM Journal of Research and Development"}
-
 MACRO {ibmsj} {"IBM Systems Journal"}
-
 MACRO {ieeese} {"IEEE Transactions on Software Engineering"}
-
 MACRO {ieeetc} {"IEEE Transactions on Computers"}
-
-MACRO {ieeetcad}
- {"IEEE Transactions on Computer-Aided Design of Integrated Circuits"}
-
+MACRO {ieeetcad} {"IEEE Transactions on Computer-Aided Design of Integrated Circuits"}
 MACRO {ipl} {"Information Processing Letters"}
-
 MACRO {jacm} {"Journal of the ACM"}
-
 MACRO {jcss} {"Journal of Computer and System Sciences"}
-
 MACRO {scp} {"Science of Computer Programming"}
-
 MACRO {sicomp} {"SIAM Journal on Computing"}
-
 MACRO {tocs} {"ACM Transactions on Computer Systems"}
-
 MACRO {tods} {"ACM Transactions on Database Systems"}
-
 MACRO {tog} {"ACM Transactions on Graphics"}
-
 MACRO {toms} {"ACM Transactions on Mathematical Software"}
-
 MACRO {toois} {"ACM Transactions on Office Information Systems"}
-
 MACRO {toplas} {"ACM Transactions on Programming Languages and Systems"}
-
 MACRO {tcs} {"Theoretical Computer Science"}
 
 READ
@@ -867,74 +790,88 @@ READ
 EXECUTE {init.field.constants}
 
 FUNCTION {sortify}
-{ purify$
+{
+  purify$
   "l" change.case$
 }
 
 FUNCTION {sortify.names}
-{ " \chsWand{}\ " " " replace.substring
+{
+  " \chsWand{}\ " " " replace.substring
   " et~al." " zzz" replace.substring
   sortify
 }
 
 FUNCTION {author.key.label}
-{ author empty$
-    { key empty$
-	{ title.field 'field.used := }
-	{ key.field 'field.used := }
-      if$
-    }
-    { author.field 'field.used := }
+{
+  author empty$
+  {
+    key empty$
+	  { title.field 'field.used := }
+	  { key.field 'field.used := }
+    if$
+  }
+  { author.field 'field.used := }
   if$
 }
 
 FUNCTION {author.editor.key.label}
-{ author empty$
-    { editor empty$
-	{ key empty$
+{
+  author empty$
+  {
+    editor empty$
+	  {
+	    key empty$
 	    { title.field 'field.used := }
 	    { key.field 'field.used := }
-	  if$
+	    if$
   	}
-	{ editor.field 'field.used := }
-      if$
-    }
-    { author.field 'field.used := }
+	  { editor.field 'field.used := }
+    if$
+  }
+  { author.field 'field.used := }
   if$
 }
 
 FUNCTION {author.key.organization.label}
-{ author empty$
-    { key empty$
-	{ organization empty$
+{
+  author empty$
+  {
+    key empty$
+	  {
+	    organization empty$
 	    { title.field 'field.used := }
 	    { organization.field 'field.used := }
-	  if$
-	}
-	{ key.field 'field.used := }
-      if$
-    }
-    { author.field 'field.used := }
+	    if$
+	  }
+	  { key.field 'field.used := }
+    if$
+  }
+  { author.field 'field.used := }
   if$
 }
 
 FUNCTION {editor.key.organization.label}
-{ editor empty$
-    { key empty$
-	{ organization empty$
+{
+  editor empty$
+  {
+    key empty$
+	  {
+	    organization empty$
 	    { title.field 'field.used := }
 	    { organization.field 'field.used := }
-	  if$
-	}
-	{ key.field 'field.used := }
-      if$
-    }
-    { editor.field 'field.used := }
+	    if$
+	  }
+	  { key.field 'field.used := }
+    if$
+  }
+  { editor.field 'field.used := }
   if$
 }
 
 FUNCTION {sort.format.title}
-{ 't :=
+{
+  't :=
   "A " #2
     "An " #3
       "The " #4 t chop.word
@@ -945,70 +882,43 @@ FUNCTION {sort.format.title}
 }
 
 FUNCTION {calc.label}
-{ make.abbr.label
+{
+  make.abbr.label
   title.field field.used =
-    { sort.format.title }
-    { sortify.names }
+  { sort.format.title }
+  { sortify.names }
   if$
-  year field.or.null purify$ #-1 #4 substring$ sortify
-  *
+  year field.or.null purify$ #-1 #4 substring$ sortify *
   'sort.label :=
 }
 
-FUNCTION {preliminaries} %%%XXX change
-{ type$ "book" =
+FUNCTION {preliminaries}
+{
+  type$ "book" =
   type$ "inbook" =
   or
-    'author.editor.key.label
-    { type$ "proceedings" =
-	'editor.key.organization.label
-	{ type$ "manual" =
+  'author.editor.key.label
+  {
+    type$ "proceedings" =
+	  'editor.key.organization.label
+	  {
+	    type$ "manual" =
 	    'author.key.organization.label
 	    'author.key.label
-	  if$
-	}
-      if$
-    }
+	    if$
+	  }
+    if$
+  }
   if$
-  author.field field.used = %%%XXX change
-    {
-      author num.names$ #2 >
-        { #1 }
-        { #0 }
-      if$
-      'etal.required :=
-    }
-    {
-      editor.field field.used = 
-        {
-          editor num.names$ #2 >
-            { #1 }
-            { #0 }
-          if$
-        }
-        { #0 }
-      if$
-      'etal.required :=
-    }
-  if$
-  #1 'etal.allowed :=
 }
 
 FUNCTION {first.presort}
-{ calc.label
+{
+  calc.label
   sort.label
   title.field field.used =
-    { skip$ }
-    { "    "
-      *
-      make.list.label sortify.names
-      *
-      "    "
-      *
-      title field.or.null
-      sort.format.title
-      *
-    }
+  { skip$ }
+  { "    " * make.list.label sortify.names * "    " * title field.or.null sort.format.title * }
   if$
   #1 entry.max$ substring$
   'sort.key$ :=
@@ -1022,31 +932,22 @@ SORT
 
 STRINGS { last.sort.label next.extra last.full.label }
 
-INTEGERS { last.extra.num last.etal.allowed }
+INTEGERS { last.extra.num }
 
 FUNCTION {initialize.confusion}
-{ #0 int.to.chr$ 'last.sort.label :=
+{
+  #0 int.to.chr$ 'last.sort.label :=
   #0 int.to.chr$ 'last.full.label :=
-  #1 'last.etal.allowed :=
 }
 
 FUNCTION {confusion.pass}
-{ last.sort.label sort.label =
-    { last.etal.allowed 
-        { last.full.label make.full.label sortify.names =
-            { skip$ }
-            { #0 'etal.allowed :=
-              #0 'last.etal.allowed :=
-            }
-          if$
-        }
-        { #0 'etal.allowed := }
-      if$
-    }
-    { sort.label 'last.sort.label :=
-      make.full.label sortify.names 'last.full.label :=
-      #1 'last.etal.allowed :=
-    }
+{
+  last.sort.label sort.label =
+  'skip$
+  {
+    sort.label 'last.sort.label :=
+    make.full.label sortify.names 'last.full.label :=
+  }
   if$
 }
 
@@ -1059,31 +960,36 @@ EXECUTE {initialize.confusion}
 REVERSE {confusion.pass}
 
 FUNCTION {initialize.last.extra.num}
-{ #0 int.to.chr$ 'last.sort.label :=
+{
+  #0 int.to.chr$ 'last.sort.label :=
   "" 'next.extra :=
   #0 'last.extra.num :=
 }
 
 FUNCTION {forward.pass}
-{ last.sort.label sort.label =
-    { last.extra.num #1 + 'last.extra.num :=
-      last.extra.num int.to.chr$ 'extra.label :=
-    }
-    { "a" chr.to.int$ 'last.extra.num :=
-      "" 'extra.label :=
-      sort.label 'last.sort.label :=
-    }
+{
+  last.sort.label sort.label =
+  {
+    last.extra.num #1 + 'last.extra.num :=
+    last.extra.num int.to.chr$ 'extra.label :=
+  }
+  {
+    "a" chr.to.int$ 'last.extra.num :=
+    "" 'extra.label :=
+    sort.label 'last.sort.label :=
+  }
   if$
 }
 
 FUNCTION {reverse.pass}
-{ next.extra "b" =
-    { "a" 'extra.label := }
-    'skip$
+{
+  next.extra "b" =
+  { "a" 'extra.label := }
+  'skip$
   if$
   year empty$
-    { "n.d." extra.label * 'list.year := }
-    { year extra.label * 'list.year := }
+  { "n.d." extra.label * 'list.year := }
+  { year extra.label * 'list.year := }
   if$
   extra.label 'next.extra :=
 }
@@ -1099,23 +1005,16 @@ ITERATE {forward.pass}
 REVERSE {reverse.pass}
 
 FUNCTION {second.presort}
-{ make.list.label
+{
+  make.list.label
   title.field field.used =
-    { sort.format.title }
-    { sortify.names }
+  { sort.format.title }
+  { sortify.names }
   if$
-  "    "
-  *
-  list.year field.or.null sortify
-  *
-  "    "
-  *
+  "    " * list.year field.or.null sortify * "    " *
   title.field field.used =
-    { skip$ }
-    { title field.or.null
-      sort.format.title
-      *
-    }
+  'skip$
+  { title field.or.null sort.format.title * }
   if$
   #1 entry.max$ substring$
   'sort.key$ :=
@@ -1126,12 +1025,15 @@ ITERATE {second.presort}
 SORT
 
 FUNCTION {begin.bib}
-{ preamble$ empty$
-    'skip$
-    { "\chspreambledefs{%" write$ newline$
-      preamble$ write$ "}" write$ newline$
-      "\chspreambletext{%" write$ newline$
-      preamble$ write$ "}" write$ newline$ }
+{
+  preamble$ empty$
+  'skip$
+  {
+    "\chspreambledefs{%" write$ newline$
+    preamble$ write$ "}" write$ newline$
+    "\chspreambletext{%" write$ newline$
+    preamble$ write$ "}" write$ newline$
+  }
   if$
   "\begin{thebibliography}{xx}" write$ newline$
 }
@@ -1143,7 +1045,8 @@ EXECUTE {init.state.consts}
 ITERATE {call.type$}
 
 FUNCTION {end.bib}
-{ newline$
+{
+  newline$
   "\end{thebibliography}" write$ newline$
 }
 
