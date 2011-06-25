@@ -771,12 +771,11 @@ FUNCTION {unpublished}
 		'skip$
 		{ format.gen.pages * }
 	if$
-	add.period$ "\chsWprinting"
+	add.period$ 
 	URL missing$
-	  'skip$
+	  { "\chsWprinting{}" tie.or.space.connect add.period$ }
 	  { "[\chsWelectronic]" tie.or.space.connect }
 	if$
-	add.period$ tie.or.space.connect
  	publisher missing$
 		'skip$
 		{ address missing$
