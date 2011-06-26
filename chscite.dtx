@@ -937,14 +937,14 @@ FUNCTION {article}
 	if$
 	journal missing$
 		'skip$
-		{ volume missing$
+		{ add.period$ journal.or.series emphasize tie.or.space.connect 
+		  volume missing$
 			{ cite$ " has journal/series with no volume!" * warning$ }
-			{ add.period$ journal.or.series emphasize tie.or.space.connect "," "\chsVolume{}" tie.or.space.connect volume tie.or.space.connect *
-				number missing$
-					'skip$
-					{ "," "\chsNumero{}" number tie.or.space.connect tie.or.space.connect * }
-				if$
-			 	}
+			{ "," "\chsVolume{}" tie.or.space.connect volume tie.or.space.connect * }
+			if$
+		  number missing$
+			'skip$
+			{ "," "\chsNumero{}" number tie.or.space.connect tie.or.space.connect * }
 			if$
 		}
 		if$
