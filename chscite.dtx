@@ -396,7 +396,7 @@
 }
 
 \AtEndDocument{\renewcommand{\chscite}{\CHS@checkcitations}}
-\@ifundefined{iflanguage}{\ExecuteOptions{english}}{\iflanguage{swedish}{\ExecuteOptions{swedish}}{\ExecuteOptions{english}}}
+\ExecuteOptions{english}
 \ProcessOptions*
 \bibliographystyle{chscite}
 %</package>
