@@ -22,14 +22,22 @@
 %<package>\NeedsTeXFormat{LaTeX2e}[1999/12/01]
 %<package>\ProvidesPackage{chscite}
 %<*package>
-    [2011/06/23 v2.0e Chalmers bibliography style]
+    [2011/09/16 v2.9 Chalmers bibliography style]
 %</package>
 %
 %<*driver>
 \documentclass{ltxdoc}
-\EnableCrossrefs         
-\CodelineIndex
-\RecordChanges
+\usepackage{chscite}[2011/09/16]
+\AtBeginDocument{%
+	\OnlyDescription%
+%	\CodelineIndex%
+%	\EnableCrossrefs%
+	\RecordChanges%
+}
+\AtEndDocument{%
+	\PrintChanges%
+%	\PrintIndex%
+}
 \begin{document}
   \DocInput{chscite.dtx}
 \end{document}
@@ -38,22 +46,36 @@
 %
 % \CheckSum{0}
 %
+% \CharacterTable
+%  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
+%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
+%   Digits        \0\1\2\3\4\5\6\7\8\9
+%   Exclamation   \!     Double quote  \"     Hash (number) \#
+%   Dollar        \$     Percent       \%     Ampersand     \&
+%   Acute accent  \'     Left paren    \(     Right paren   \)
+%   Asterisk      \*     Plus          \+     Comma         \,
+%   Minus         \-     Point         \.     Solidus       \/
+%   Colon         \:     Semicolon     \;     Less than     \<
+%   Equals        \=     Greater than  \>     Question mark \?
+%   Commercial at \@     Left bracket  \[     Backslash     \\
+%   Right bracket \]     Circumflex    \^     Underscore    \_
+%   Grave accent  \`     Left brace    \{     Vertical bar  \|
+%   Right brace   \}     Tilde         \~}
 %
 % \changes{v1.0}{2011/06/05}{Initial version}
-% \changes{v1.0b}{2011/06/06}{Fixed bug concerning editors}
 % \changes{v2.0}{2011/06/06}{Added language options}
-% \changes{v2.0b}{2011/06/12}{Fixed a critical bug}
-% \changes{v2.0c}{2011/06/22}{Improved translations, cleaned up \texttt{.bst} file}
-% \changes{v2.0d}{2011/06/23}{Improved handling of editions}
-% \changes{v2.0e}{2011/06/23}{Fixed editor translation}
+% \changes{v2.0c}{2011/06/22}{Improved translations}
+% \changes{v2.9}{2011/09/16}{Polyglossia compatibility}
+% \changes{v2.9}{2011/09/16}{Various bugfixes}
+% \changes{v2.9}{2011/09/16}{Improved documentation}
 %
 % \GetFileInfo{chscite.dtx}
 %
-% \DoNotIndex{\newcommand,\newenvironment}
+% \DoNotIndex{\newcommand,\newenvironment,\ ,\null,\ifthenelse,\def,\equal}
 % 
-%
+% \GetFileInfo{chscite.dtx}
 % \title{The \textsf{chscite} package\thanks{This document
-%   corresponds to \textsf{chscite}~\fileversion (converges to 3, a
+%   corresponds to \textsf{chscite}~\fileversion~(converges to 3, a
 %   completely arbitrary number), dated \filedate.}}
 % \author{Simon Sigurdhsson \\ \texttt{ssimon@student.chalmers.se}}
 %
@@ -61,65 +83,123 @@
 %
 % \section{Introduction}
 %
-% This package, based on the \textsf{harvard} package for Harvard-style
-% citations, provides a citation suite for students at Chalmers
+% This package, heavily based on the \textsf{harvard} package for 
+% Harvard-style citations, provides a citation suite for students at Chalmers
 % University of Technology that follows given recommendations. The package
-% is aimed at the swedish audience, and any localizable strings are in
-% swedish by default.
-%
-% \subsection{Planned future improvements}
-% \begin{itemize}
-% 	\item Remove unnessecary code from |.bst| and |.sty| files
-%		\item Document the language options
-% \end{itemize}
+% is aimed at the swedish audience, with additional support for english
+% enabled by default.
 %
 % \section{Usage}
+% This section assumes general knowledge of \textsc{Bib}\TeX{}, and in
+% particular that the user knows how to create \textsc{Bib}\TeX{} databases,
+% include these in \LaTeX{} documents and run the |bibtex| binary.
 %
-% See the \textsf{harvard} package for detailed information on each command.
-% This package contains roughly the same macros as the \textsf{harvard}
-% package, briefly explained here for completeness.
+% \subsection{Options}
+% The package is invoked as |\usepacakge|\oarg{language}|{chscite}|, where
+% \meta{language} can be either |english| (the default) or |swedish|. The
+% language option controls the language of various internal strings used by
+% the \textsc{Bib}\TeX{} style |chscite.bst|.
 %
-% \DescribeMacro{\citeasnoun}
-% Cites a work as a noun, i.e. |\citeasnoun{Author}| gives ``Author et.~al
-% (2008)''.
+% \subsection{Commands}
+% The package itself contains relatively few user-exposed commands. These can
+% be used to cite references in a few different ways. For more information on
+% these commands, refer to the \textsf{harvard} package manual.
+%
+% \subsubsection{Full citations}
+% \DescribeMacro{\nocite}
+% The \cs{nocite}\marg{reference} command includes a reference in the
+% bibliography without printing anything. This is useful for references that
+% aren't actually referenced in text.
 %
 % \DescribeMacro{\cite}
-% Cites a work regularly, i.e. |\cite{Author}| gives ``(Author et.~al,
-% 2008)''.
-%
-% \DescribeMacro{\possessivecite}
-% Cites a work in a possessive manner, i.e. |\possessivecite{Author}| gives
-% ``Author et.~als (2008)''.
+% The familiar \cs{cite}\oarg{suffix}\marg{reference} command works as for
+% standard \textsc{Bib}\TeX{} styles, except it now uses the Harvard 
+% convention for citing references. Sample output: \textbf{(Lamport 1986)}.
 %
 % \DescribeMacro{\citeaffixed}
-% Cites a work as a noun, i.e. i.e. |\citeaffixed{Author}{e.g.}| gives
-% ``(e.g.~Author et.~al, 2008)''.
+% The \cs{citeaffixed}\oarg{suffix}\marg{reference}\marg{prefix} command works
+% the same way as \cs{cite}, but prefixes the output with \meta{prefix}.
+% Sample output: \textbf{(i.e.~Lamport 1986)}.
+%
+% \DescribeMacro{\citeasnoun}
+% The \cs{citeasnoun}\oarg{suffix}\marg{reference} command cites a reference
+% as a noun. Sample output: \textbf{Lamport (1986)}.
+%
+% \DescribeMacro{\possessivecite}
+% The \cs{possessivecite}\oarg{suffix}\marg{reference} command cites a 
+% reference as in the possessive manner.
+% Sample output: \textbf{Lamport's (1986)}.
+%
+% \subsubsection{Partial citations}
+% \DescribeMacro{\citename}
+% The \cs{citename}\marg{reference} command simply prints the author name(s)
+% of the given reference.
+%
+% \DescribeMacro{\citeyear}
+% The \cs{citeyear}\marg{reference} command simply prints the year
+% of the given reference.
+%
+%
+% \section{Known issues}
+% The |chscite.bst| \textsc{Bib}\TeX{} style does not support cross references
+% at the moment. This is a planned improvement.
 %
 % \PrintChanges
 %
 % \StopEventually{}
 %
 % \section{Implementation}
-% \subsection{\LaTeX{} package file}
-%    \begin{macrocode}
+%
+% \subsection{\LaTeX{} package file \texttt{chscite.sty}}
+%
+% \iffalse
 %<*package>
+% \fi
+%
+%    \begin{macrocode}
 \RequirePackage{ifthen}
 \@ifundefined{url}{\RequirePackage{url}}{}
+%    \end{macrocode}
+%
+% \begin{macro}{\chsurl}
+%    \begin{macrocode}
 \newcommand{\chsurl}[1]{\url{#1}}
-
+%    \end{macrocode}
+% \end{macro}
+%
+%    \begin{macrocode}
 %% Kristoffer H. Rose <kris@diku.dk> 1995/03/01:
 %%   do not expand macros in citations: put definitions on .aux file instead.
 {\catcode`\:=12 \catcode`\-=12 \catcode`\>=12 \catcode`\<=12 %
  \gdef\codeof#1{\expandafter\codeof@\meaning#1<-:}%
  \gdef\codeof@#1:->#2<-:{#2}}
-
+%    \end{macrocode}
+%
+% \begin{macro}{\chspreambletext}
+%    \begin{macrocode}
 \def\chspreambletext{\catcode`\#=12 \chspreambletext@}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\chspreambletext@}
+%    \begin{macrocode}
 \def\chspreambletext@#1{\def\next{#1}\catcode`\#=6 %
   \immediate\write\@auxout{\string\chspreambledefs{%
       \string\AtBeginDocument{\codeof\next}}}}
-
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\chspreambledefs}
+%    \begin{macrocode}
 \def\chspreambledefs#1{#1\gdef\chspreambledefs##1{}}
-
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\chsitem}
+%    \begin{macrocode}
 \newcommand{\chsitem}[4][\null]{\item[]%
 \if@filesw{ \def\protect##1{\string ##1\space}%
 \ifthenelse{\equal{#1}{\null}}
@@ -129,178 +209,316 @@
 }\fi%
 \protect\hspace*{-\labelwidth}\protect\hspace*{-\labelsep}\ignorespaces%
 }
-
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\chscite}
+%    \begin{macrocode}
 \newcommand{\chscite}[4]{
   \global\@namedef{CHS@fn@#1}{#2}
   \global\@namedef{CHS@an@#1}{#3}
   \global\@namedef{CHS@yr@#1}{#4}
   \global\@namedef{CHS@df@#1}{\csname CHS@fn@#1\endcsname}
 }
-
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\CHS@citetoaux}
+%    \begin{macrocode}
 \newcommand{\CHS@citetoaux}[1]{%
   \if@filesw\immediate\write\@auxout{\string\citation{#1}}\fi%
 }
-
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\CHS@checkdef}
+%    \begin{macrocode}
 \newcommand{\CHS@checkdef}[2]{\@ifundefined{CHS@df@#1}%
   {\textbf{?}\@warning{Citation '#1' on page \thepage \space undefined}}%
   {#2}%
 }
-
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\CHS@dolist}
+%    \begin{macrocode}
 \newcommand{\CHS@dolist}[2]{\def\@citea{\null}\@for\@citeb:=#1\do%
-{\@citea\def\@citea{\CHS@hisep\penalty\@m\ }\CHS@checkdef{\@citeb}%
-{#2{\@citeb}\CHS@hysep\penalty\@m\ %
+{\@citea\def\@citea{,\penalty\@m\ }\CHS@checkdef{\@citeb}%
+{#2{\@citeb}\null\penalty\@m\ %
 \CHS@year{\@citeb}\CHS@setd{\@citeb}}}%
 }
-
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\@enamedef}
+%    \begin{macrocode}
 \def\@enamedef#1{\expandafter\def\csname #1\expandafter\endcsname\expandafter}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\CHS@name}
+%    \begin{macrocode}
 \newcommand{\CHS@name}[1]{\csname CHS@df@#1\endcsname}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\CHS@fname}
+%    \begin{macrocode}
 \newcommand{\CHS@fname}[1]{\csname CHS@fn@#1\endcsname}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\CHS@aname}
+%    \begin{macrocode}
 \newcommand{\CHS@aname}[1]{\csname CHS@an@#1\endcsname}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\CHS@year}
+%    \begin{macrocode}
 \newcommand{\CHS@year}[1]{\csname CHS@yr@#1\endcsname}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\CHS@setd}
+%    \begin{macrocode}
 \newcommand{\CHS@setd}[1]{%
 \global\@enamedef{CHS@df@#1}{\csname CHS@an@#1\endcsname}%
 }
-
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\CHS@df@}
+%    \begin{macrocode}
 %% Berwin A. Turlach <berwin@alphasun.anu.edu.au>
 \global\@namedef{CHS@df@*}{\csname CHS@fn@*\endcsname}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\nocite}
+% Cite a reference without printing anything.
+%    \begin{macrocode}
 \renewcommand{\nocite}[1]{\CHS@citetoaux{#1}%
 \@for\@citeb:=#1\do%
 {\CHS@checkdef{\@citeb}{}}}%
-
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\cite}
+% \begin{macro}{\CHS@dcite}
+% \begin{macro}{\CHS@acite}
+% \begin{macro}{\CHS@fcite}
+% Cite a reference in the traditional manner.
+%    \begin{macrocode}
 \renewcommand{\cite}{\@ifstar{\@ifstar{\CHS@acite}{\CHS@fcite}}{\CHS@dcite}}
-
 \newcommand{\CHS@dcite}[2][\null]{\CHS@citetoaux{#2}%
-{\chsleft\CHS@dolist{#2}{\CHS@name}\ifthenelse{\equal{#1}{\null}}%
-  {}{, #1}\chsright}%
+{(\CHS@dolist{#2}{\CHS@name}\ifthenelse{\equal{#1}{\null}}%
+  {}{, #1})}%
 }
-
 \newcommand{\CHS@acite}[2][\null]{\CHS@citetoaux{#2}%
-{\chsleft\CHS@dolist{#2}{\CHS@aname}\ifthenelse{\equal{#1}{\null}}%
-  {}{, #1}\chsright}%
+{(\CHS@dolist{#2}{\CHS@aname}\ifthenelse{\equal{#1}{\null}}%
+  {}{, #1})}%
 }
-
 \newcommand{\CHS@fcite}[2][\null]{\CHS@citetoaux{#2}%
-{\chsleft\CHS@dolist{#2}{\CHS@fname}\ifthenelse{\equal{#1}{\null}}%
-  {}{, #1}\chsright}%
+{(\CHS@dolist{#2}{\CHS@fname}\ifthenelse{\equal{#1}{\null}}%
+  {}{, #1})}%
 }
-
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+%
+%
+% \begin{macro}{\citeaffixed}
+% \begin{macro}{\CHS@fciteaff}
+% \begin{macro}{\CHS@aciteaff}
+% \begin{macro}{\CHS@dciteaff}
+% Cite a reference with affixed text.
+%    \begin{macrocode}
 \newcommand{\citeaffixed}{\@ifstar{\@ifstar{\CHS@aciteaff}{\CHS@fciteaff}}%
 {\CHS@dciteaff}%
 }
-
 \newcommand{\CHS@fciteaff}[3][\null]{\CHS@citetoaux{#2}%
-{\chsleft#3\ \CHS@dolist{#2}{\CHS@fname}\ifthenelse{\equal{#1}{\null}}%
-    {}{, #1}\chsright}%
+{(#3\ \CHS@dolist{#2}{\CHS@fname}\ifthenelse{\equal{#1}{\null}}%
+    {}{, #1})}%
 }
-
 \newcommand{\CHS@aciteaff}[3][\null]{\CHS@citetoaux{#2}%
-{\chsleft#3\ \CHS@dolist{#2}{\CHS@aname}\ifthenelse{\equal{#1}{\null}}%
-    {}{, #1}\chsright}%
+{(#3\ \CHS@dolist{#2}{\CHS@aname}\ifthenelse{\equal{#1}{\null}}%
+    {}{, #1})}%
 }
-
 \newcommand{\CHS@dciteaff}[3][\null]{\CHS@citetoaux{#2}%
-{\chsleft#3\ \CHS@dolist{#2}{\CHS@name}\ifthenelse{\equal{#1}{\null}}%
-    {}{, #1}\chsright}%
+{(#3\ \CHS@dolist{#2}{\CHS@name}\ifthenelse{\equal{#1}{\null}}%
+    {}{, #1})}%
 }
-
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+%
+%
+% \begin{macro}{\citeasnoun}
+% \begin{macro}{\CHS@fciteasn}
+% \begin{macro}{\CHS@aciteasn}
+% \begin{macro}{\CHS@dciteasn}
+% Cite a reference as a noun.
+%    \begin{macrocode}
 \newcommand{\citeasnoun}{\@ifstar{\@ifstar{\CHS@aciteasn}{\CHS@fciteasn}}%
 {\CHS@dciteasn}%
 }
-
 \newcommand{\CHS@fciteasn}[2][\null]{\CHS@citetoaux{#2}\CHS@checkdef{#2}{%
-{\CHS@fname{#2}\ \chsyearleft\CHS@year{#2}\ifthenelse{\equal{#1}{\null}}
-    {}{, #1}\chsyearright}\CHS@setd{#2}}%
+{\CHS@fname{#2}\ (\CHS@year{#2}\ifthenelse{\equal{#1}{\null}}
+    {}{, #1})}\CHS@setd{#2}}%
 }
-
 \newcommand{\CHS@aciteasn}[2][\null]{\CHS@citetoaux{#2}\CHS@checkdef{#2}{%
-{\CHS@aname{#2}\ \chsyearleft\CHS@year{#2}\ifthenelse{\equal{#1}{\null}}
-    {}{, #1}\chsyearright}\CHS@setd{#2}}%
+{\CHS@aname{#2}\ (\CHS@year{#2}\ifthenelse{\equal{#1}{\null}}
+    {}{, #1})}\CHS@setd{#2}}%
 }
-
 \newcommand{\CHS@dciteasn}[2][\null]{\CHS@citetoaux{#2}\CHS@checkdef{#2}{%
-{\CHS@name{#2}\ \chsyearleft\CHS@year{#2}\ifthenelse{\equal{#1}{\null}}
-    {}{, #1}\chsyearright}\CHS@setd{#2}}%
+{\CHS@name{#2}\ (\CHS@year{#2}\ifthenelse{\equal{#1}{\null}}
+    {}{, #1})}\CHS@setd{#2}}%
 }
-
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+%
+%
+% \begin{macro}{\possessivecite}
+% \begin{macro}{\CHS@fcitepos}
+% \begin{macro}{\CHS@acitepos}
+% \begin{macro}{\CHS@dcitepos}
+% Cite a reference in the possessive.
+%    \begin{macrocode}
 \newcommand{\possessivecite}{\@ifstar{\@ifstar{\CHS@acitepos}{\CHS@fcitepos}}%
 {\CHS@dcitepos}%
 }
-
 \newcommand{\CHS@fcitepos}[2][\null]{\CHS@citetoaux{#2}\CHS@checkdef{#2}{%
-{\CHS@fname{#2}s \chsyearleft\CHS@year{#2}\ifthenelse{\equal{#1}{\null}}
-    {}{, #1}\chsyearright}\CHS@setd{#2}}%
+{\CHS@fname{#2}s (\CHS@year{#2}\ifthenelse{\equal{#1}{\null}}
+    {}{, #1})}\CHS@setd{#2}}%
 }
-
 \newcommand{\CHS@acitepos}[2][\null]{\CHS@citetoaux{#2}\CHS@checkdef{#2}{%
-{\CHS@aname{#2}s \chsyearleft\CHS@year{#2}\ifthenelse{\equal{#1}{\null}}
-    {}{, #1}\chsyearright}\CHS@setd{#2}}%
+{\CHS@aname{#2}s (\CHS@year{#2}\ifthenelse{\equal{#1}{\null}}
+    {}{, #1})}\CHS@setd{#2}}%
 }
-
 \newcommand{\CHS@dcitepos}[2][\null]{\CHS@citetoaux{#2}\CHS@checkdef{#2}{%
-{\CHS@name{#2}s \chsyearleft\CHS@year{#2}\ifthenelse{\equal{#1}{\null}}
-    {}{, #1}\chsyearright}\CHS@setd{#2}}%
+{\CHS@name{#2}s (\CHS@year{#2}\ifthenelse{\equal{#1}{\null}}
+    {}{, #1})}\CHS@setd{#2}}%
 }
-
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+%
+%
+% \begin{macro}{\citename}
+% \begin{macro}{\CHS@fcitenam}
+% \begin{macro}{\CHS@acitenam}
+% \begin{macro}{\CHS@dcitenam}
+% Print the name(s) of the author(s) of a specific reference.
+%    \begin{macrocode}
 \newcommand{\citename}{\@ifstar{\@ifstar{\CHS@acitenam}\CHS@fcitenam}%
 {\CHS@dcitenam}%
 }
-
 \newcommand{\CHS@fcitenam}[2][\null]{\CHS@citetoaux{#2}\CHS@checkdef{#2}{%
 {\CHS@fname{#2}\ifthenelse{\equal{#1}{\null}}
-    {}{\ \chsleft#1\chsright}}}%
+    {}{\ (#1)}}}%
 }
-
 \newcommand{\CHS@acitenam}[2][\null]{\CHS@citetoaux{#2}\CHS@checkdef{#2}{%
 {\CHS@aname{#2}\ifthenelse{\equal{#1}{\null}}
-    {}{\ \chsleft#1\chsright}}}%
+    {}{\ (#1)}}}%
 }
-
 \newcommand{\CHS@dcitenam}[2][\null]{\CHS@citetoaux{#2}\CHS@checkdef{#2}{%
 {\CHS@name{#2}\ifthenelse{\equal{#1}{\null}}
-    {}{\ \chsleft#1\chsright}}}%
+    {}{\ (#1)}}}%
 }
-
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+%
+%
+% \begin{macro}{\citeyear}
+% \begin{macro}{\CHS@citeyr}
+% \begin{macro}{\CHS@citeyrnb}
+% Print the year of a specific reference.
+%    \begin{macrocode}
 \newcommand{\citeyear}{\@ifstar{\CHS@citeyrnb}{\CHS@citeyr}}
-
 \newcommand{\CHS@citeyrnb}[2][\null]{\CHS@citetoaux{#2}%
 {\def\@citea{\null}\@for\@citeb:=#2\do%
-{\@citea\def\@citea{\CHS@hisep\penalty\@m\ }\CHS@checkdef{\@citeb}%
+{\@citea\def\@citea{,\penalty\@m\ }\CHS@checkdef{\@citeb}%
 {\CHS@year{\@citeb}}}\ifthenelse{\equal{#1}{\null}}%
 {}{, #1}}%
 }
-
 \newcommand{\CHS@citeyr}[2][\null]{\CHS@citetoaux{#2}%
-{\chsleft\def\@citea{\null}\@for\@citeb:=#2\do%
-{\@citea\def\@citea{\CHS@hisep\penalty\@m\ }\CHS@checkdef{\@citeb}%
+{(\def\@citea{\null}\@for\@citeb:=#2\do%
+{\@citea\def\@citea{,\penalty\@m\ }\CHS@checkdef{\@citeb}%
 {\CHS@year{\@citeb}}}\ifthenelse{\equal{#1}{\null}}%
-{}{, #1}\chsright}%
+{}{, #1})}%
 }
-
-\newcommand{\CHS@hysep}{\null}
-\newcommand{\CHS@hisep}{,}
-\newcommand{\chsleft}{(}
-\newcommand{\chsright}{)}
-\newcommand{\chsyearleft}{\chsleft}
-\newcommand{\chsyearright}{\chsright}
-
-\newcommand{\CHS@checkcitations}[4]{
-  \def\CHS@tempa{#2}\expandafter
-  \ifx \csname CHS@fn@#1\endcsname \CHS@tempa
-    \def\CHS@tempa{#3}\expandafter
-    \ifx \csname CHS@an@#1\endcsname \CHS@tempa
-      \def\CHS@tempa{#4}\expandafter
-      \ifx \csname CHS@yr@#1\endcsname \CHS@tempa
-      \else
-        \@tempswatrue
-      \fi
-    \else
-      \@tempswatrue
-    \fi
-  \else
-    \@tempswatrue
-  \fi
-}
-
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+%
+% \changes{v2.9}{2011/09/16}{Removed \cs{CHS@hisep}}
+% \changes{v2.9}{2011/09/16}{Removed \cs{CHS@hysep}}
+% \changes{v2.9}{2011/09/16}{Removed \cs{chsleft}}
+% \changes{v2.9}{2011/09/16}{Removed \cs{chsright}}
+% \changes{v2.9}{2011/09/16}{Removed \cs{chsyearleft}}
+% \changes{v2.9}{2011/09/16}{Removed \cs{chsyearright}}
+% \changes{v2.9}{2011/09/16}{Removed \cs{CHS@checkcitations}}
+%
+%
+% \begin{macro}{\chsWand}
+% \begin{macro}{\chsWjanuary}
+% \begin{macro}{\chsWfebruary}
+% \begin{macro}{\chsWmarch}
+% \begin{macro}{\chsWapril}
+% \begin{macro}{\chsWmay}
+% \begin{macro}{\chsWjune}
+% \begin{macro}{\chsWjuly}
+% \begin{macro}{\chsWaugust}
+% \begin{macro}{\chsWseptember}
+% \begin{macro}{\chsWoctober}
+% \begin{macro}{\chsWnovember}
+% \begin{macro}{\chsWdecember}
+% \begin{macro}{\chsWprinting}
+% \begin{macro}{\chsWphdthesis}
+% \begin{macro}{\chsWmscthesis}
+% \begin{macro}{\chsWinstitution}
+% \begin{macro}{\chsWin}
+% \begin{macro}{\chsPage}
+% \begin{macro}{\chsPages}
+% \begin{macro}{\chsEdition}
+% \begin{macro}{\chsNumero}
+% \begin{macro}{\chsVolume}
+% \begin{macro}{\chsWst}
+% \begin{macro}{\chsWnd}
+% \begin{macro}{\chsWrd}
+% \begin{macro}{\chsWth}
+% \begin{macro}{\chsWeditor}
+% \changes{v2.0e}{2011/06/23}{Fixed editor translation}
+% \begin{macro}{\chsWelectronic}
+% Various translatable terms
+%    \begin{macrocode}
 \newcommand{\chsWand}{}%
 \newcommand{\chsWjanuary}{}%
 \newcommand{\chsWfebruary}{}%
@@ -330,7 +548,40 @@
 \newcommand{\chsWth}{}%
 \newcommand{\chsWeditor}{}%
 \newcommand{\chsWelectronic}{}%
-
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+%
+% Set up swedish translations if |swedish| option is given.
+% \changes{v2.0b}{2011/06/12}{Fixed a critical bug in |swedish| option}
+%    \begin{macrocode}
 \DeclareOption{swedish}{%
 \renewcommand{\chsWand}{och}%
 \renewcommand{\chsWjanuary}{januari}%
@@ -362,7 +613,10 @@
 \renewcommand{\chsWeditor}{red.}%
 \renewcommand{\chsWelectronic}{Elektronisk}%
 }
-
+%    \end{macrocode}
+%
+% Set up english translations if |english| option is given.
+%    \begin{macrocode}
 \DeclareOption{english}{%
 \renewcommand{\chsWand}{and}%
 \renewcommand{\chsWjanuary}{January}%
@@ -394,17 +648,31 @@
 \renewcommand{\chsWeditor}{ed.}%
 \renewcommand{\chsWelectronic}{Electronic}%
 }
-
-\AtEndDocument{\renewcommand{\chscite}{\CHS@checkcitations}}
+%    \end{macrocode}
+%
+% Execute default options, process given options and choose the correct 
+% bibliography style.
+%    \begin{macrocode}
 \ExecuteOptions{english}
 \ProcessOptions*
 \bibliographystyle{chscite}
-%</package>
+\endinput
 %    \end{macrocode}
 %
-% \subsection{\textsc{Bib}\TeX{} style file}
-%    \begin{macrocode}
+% \iffalse
+%</package>
+% \fi
+%
+% \subsection{\textsc{Bib}\TeX{} style file \texttt{chscite.bst}}
+% \changes{v1.0b}{2011/06/06}{Fixed bug concerning editors in \texttt{.bst} file}
+% \changes{v2.0c}{2011/06/22}{Cleaned up \texttt{.bst} file}
+% \changes{v2.0d}{2011/06/23}{Improved handling of editions}
+%
+% \iffalse
 %<*bibstyle>
+% \fi
+%
+%    \begin{macrocode}
 ENTRY
   {
     address
@@ -1440,6 +1708,11 @@ FUNCTION {end.bib}
 }
 
 EXECUTE {end.bib}
-%</bibstyle>
 %    \end{macrocode}
+%
+% \iffalse
+%</bibstyle>
+% \fi
+%
 % \Finale
+\endinput
