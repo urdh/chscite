@@ -22,12 +22,12 @@
 %<package>\NeedsTeXFormat{LaTeX2e}[1999/12/01]
 %<package>\ProvidesPackage{chscite}
 %<*package>
-    [2011/09/16 v2.9 Chalmers bibliography style]
+    [2011/09/20 v2.99 Chalmers bibliography style]
 %</package>
 %
 %<*driver>
 \documentclass{ltxdoc}
-\usepackage{chscite}[2011/09/16]
+\usepackage{chscite}[2011/09/20]
 \AtBeginDocument{%
 	\OnlyDescription%
 %	\CodelineIndex%
@@ -68,6 +68,7 @@
 % \changes{v2.9}{2011/09/16}{Polyglossia compatibility}
 % \changes{v2.9}{2011/09/16}{Various bugfixes}
 % \changes{v2.9}{2011/09/16}{Improved documentation}
+% \changes{v2.99}{2011/09/16}{Fixed critical \texttt{.dtx} bug}
 %
 % \GetFileInfo{chscite.dtx}
 %
@@ -656,7 +657,6 @@
 \ExecuteOptions{english}
 \ProcessOptions*
 \bibliographystyle{chscite}
-\endinput
 %    \end{macrocode}
 %
 % \iffalse
