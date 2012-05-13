@@ -26,12 +26,12 @@
 %<package>\NeedsTeXFormat{LaTeX2e}[1999/12/01]
 %<package>\ProvidesPackage{chscite}
 %<*package>
-    [2011/09/20 v2.99 Chalmers bibliography style]
+    [2012/05/13 v2.999 Chalmers bibliography style]
 %</package>
 %
 %<*driver>
 \documentclass{ltxdoc}
-\usepackage{chscite}[2011/09/20]
+\usepackage{chscite}[2012/05/13]
 \AtBeginDocument{%
 	\OnlyDescription%
 %	\CodelineIndex%
@@ -40,7 +40,7 @@
 }
 \AtEndDocument{%
 	\PrintChanges%
-%	\PrintIndex%
+	\PrintIndex%
 }
 \begin{document}
   \DocInput{chscite.dtx}
@@ -85,6 +85,7 @@
 % \author{Simon Sigurdhsson \\ \texttt{ssimon@student.chalmers.se}}
 %
 % \maketitle
+% \tableofcontents
 %
 % \section{Introduction}
 %
@@ -144,6 +145,48 @@
 % The \cs{citeyear}\marg{reference} command simply prints the year
 % of the given reference.
 %
+% \subsection{Using \texttt{@misc} for web sources}
+% In this package, the \texttt{@misc} \textsc{Bib}\TeX{} style has been crafted
+% to typeset web sources correctly as per Chalmers recommendations. Proper use,
+% apart from usual \textsc{Bib}\TeX{} syntax, includes using the \texttt{note}
+% field to specify retreival date and the \texttt{howpublished} field for web
+% page title:
+% \iffalse
+%<*example>
+% \fi
+\begin{verbatim}
+@misc{google,
+	author = {Johnson, S.},
+	year = 2007,
+	title = {Exploiting the mobile channel},
+	howpublished = {m.Net Corporation},
+	url = {http://www.mnetcorporation.com/article-exploiting-the-mobile-channel},
+	note = {2008-04-18}
+}
+\end{verbatim}
+% \iffalse
+%</example>
+% \fi
+%
+% \subsection{Using the \texttt{@patent} entry type}
+% The \texttt{@patent} included in this package is a custom alternative to
+% \texttt{@techreport} especially made for referencing patents. Required fields
+% are \texttt{author}, \texttt{year}, \texttt{title} and \texttt{number} (the
+% patent number). There are no optional fields: 
+% \iffalse
+%<*example>
+% \fi
+\begin{verbatim}
+@patent{volvo,
+	author = {{Volvo Lastvagnar}},
+	year = 2006,
+	title = {Information based controlling of chassis height of a vehicle},
+	number = {SE0403224}
+}
+\end{verbatim}
+% \iffalse
+%</example>
+% \fi
 %
 % \section{Known issues}
 % The |chscite.bst| \textsc{Bib}\TeX{} style does not support cross references
@@ -671,6 +714,7 @@
 % \changes{v1.0b}{2011/06/06}{Fixed bug concerning editors in \texttt{.bst} file}
 % \changes{v2.0c}{2011/06/22}{Cleaned up \texttt{.bst} file}
 % \changes{v2.0d}{2011/06/23}{Improved handling of editions}
+% \changes{v2.999}{2012/05/13}{Added \texttt{@patent} and \texttt{@misc} entries}
 %
 % \iffalse
 %<*bibstyle>
@@ -808,7 +852,10 @@ FUNCTION {fin.entry}
 {
   add.period$
   write$
-  write.url
+  type$ "misc" =
+    'skip$
+    'write.url
+  if$
   newline$
 }
 
@@ -1405,10 +1452,47 @@ FUNCTION {unpublished}
 }
 
 FUNCTION {misc}
-{ cite$ ": @misc cite style not implemented!" * warning$ }
+{ output.bibitem
+  make.list.label "(" tie.or.space.connect list.year * ")" *
+  author "author" item.check
+  title missing$
+    'skip$
+    { title tie.or.space.connect add.period$ }
+  if$
+  howpublished missing$
+    'skip$
+    { howpublished emphasize tie.or.space.connect add.period$ }
+  if$
+  URL missing$
+    'skip$
+    { " \chsurl{" URL "}" * * tie.or.space.connect add.period$ }
+  if$
+  note missing$
+    'skip$
+    { "(" note ")" * * tie.or.space.connect add.period$ }
+  if$
+  write$
+  fin.entry
+}
 
 FUNCTION {techreport}
 { cite$ ": @techreport cite style not implemented!" * warning$ }
+
+FUNCTION {patent}
+{ output.bibitem
+  make.list.label "(" tie.or.space.connect list.year * ")" *
+  author "author" item.check
+    title missing$
+      'skip$
+      { title emphasize tie.or.space.connect add.period$ }
+    if$
+    number missing$
+      'skip$
+      { number tie.or.space.connect add.period$ }
+    if$
+  write$
+  fin.entry
+}
 
 FUNCTION {default.type} { misc }
 
