@@ -565,6 +565,7 @@
 % \begin{macro}{\chsWeditor}
 % \changes{v2.0e}{2011/06/23}{Fixed editor translation}
 % \begin{macro}{\chsWelectronic}
+% \begin{macro}{\chsWtechreport}
 % Various translatable terms
 %    \begin{macrocode}
 \newcommand{\chsWand}{}%
@@ -596,7 +597,9 @@
 \newcommand{\chsWth}{}%
 \newcommand{\chsWeditor}{}%
 \newcommand{\chsWelectronic}{}%
+\newcommand{\chsWtechreport}{}%
 %    \end{macrocode}
+% \end{macro}
 % \end{macro}
 % \end{macro}
 % \end{macro}
@@ -660,6 +663,7 @@
 \renewcommand{\chsWth}{:e}%
 \renewcommand{\chsWeditor}{red.}%
 \renewcommand{\chsWelectronic}{Elektronisk}%
+\renewcommand{\chsWtechreport}{Teknisk rapport}%
 }
 %    \end{macrocode}
 %
@@ -695,6 +699,7 @@
 \renewcommand{\chsWth}{th}%
 \renewcommand{\chsWeditor}{ed.}%
 \renewcommand{\chsWelectronic}{Electronic}%
+\renewcommand{\chsWtechreport}{Technical report}%
 }
 %    \end{macrocode}
 %
@@ -715,6 +720,7 @@
 % \changes{v2.0c}{2011/06/22}{Cleaned up \texttt{.bst} file}
 % \changes{v2.0d}{2011/06/23}{Improved handling of editions}
 % \changes{v2.999}{2012/05/13}{Added \texttt{@patent} and \texttt{@misc} entries}
+% \changes{v2.9999}{2012/12/05}{Added \texttt{@techreport} style}
 %
 % \iffalse
 %<*bibstyle>
@@ -1476,7 +1482,34 @@ FUNCTION {misc}
 }
 
 FUNCTION {techreport}
-{ cite$ ": @techreport cite style not implemented!" * warning$ }
+{ output.bibitem
+  make.list.label "(" tie.or.space.connect list.year * ")" *
+  author "author" item.check
+  title missing$
+    { cite$ " has no title!" * warning$ }
+    { title emphasize tie.or.space.connect add.period$ }
+  if$
+  URL missing$
+    'skip$
+    { "[\chsWelectronic]" tie.or.space.connect }
+  if$
+  institution missing$
+    { cite$ " has no institution!" * warning$ }
+    { address missing$
+        { cite$ " has institution with no address!" * warning$ }
+        { address ":" * tie.or.space.connect }
+      if$
+      institution tie.or.space.connect add.period$
+      number missing$
+        { cite$ " has institution with no number!" * warning$ }
+        { "(\chsWtechreport{}:" number tie.or.space.connect ")" * tie.or.space.connect }
+      if$
+    }
+    if$
+  add.period$
+  write$
+  fin.entry
+}
 
 FUNCTION {patent}
 { output.bibitem
